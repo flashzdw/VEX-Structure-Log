@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+dist2/
+
+# Environment files (包含敏感信息)
+.env
+.env.local
+.env.production
+
+# PocketBase data (数据库文件)
+pb_data/
+
+# Logs
+*.log
+npm-debug.log*
+
+# macOS系统文件
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# IDE配置
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 花生壳配置
+*.ngrok
+*.hosotonic
+
+# 临时文件
+*.tmp
+*.temp
