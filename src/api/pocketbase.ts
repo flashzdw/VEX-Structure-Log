@@ -284,7 +284,7 @@ export async function joinTeamByInviteCode(inviteCode: string) {
   }
   
   // 查找队伍
-  const teamsResult = await pb.collection('teams').getList(1, 1, {
+  const teamsResult = await pb.collection('teams').getList<PBTeam>(1, 1, {
     filter: `inviteCode = "${inviteCode}"`
   });
   
