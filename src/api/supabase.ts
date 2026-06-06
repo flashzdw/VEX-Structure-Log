@@ -380,12 +380,10 @@ export async function registerUser(
   if (error) {
     throw new Error(error.message);
   }
-  // Supabase 可能在 Auth 设置中要求 email 确认；session 为空时给出提示
-  if (!data.session) {
-    throw new Error(
-      '注册成功，请前往邮箱完成确认后再登录（如不需要确认，可在 Supabase 控制台 Authentication → Providers → Email 中关闭）'
-    );
-  }
+  // 不再因为 "未返回 session" 而抛错：是否启用邮箱确认由 Supabase 控制台决定。
+  // 若 Supabase 项目开启了"Confirm email"，signUp 不会返回 session，
+  // 此时由 store 兜底调用 signInWithPassword 完成自动登录（也会因为邮箱未确认而失败，
+  // 由 UI 给出明确提示；用户在 Supabase 中关闭确认后即可正常注册即用）。
   return data;
 }
 

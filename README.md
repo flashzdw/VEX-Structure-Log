@@ -73,6 +73,14 @@ export default tseslint.config({
    - **Project URL** → `VITE_SUPABASE_URL`
    - **anon public key** → `VITE_SUPABASE_ANON_KEY`
 
+### 1.5 关闭邮箱确认（推荐）
+为了本地开发与测试方便，建议在 Supabase 控制台关闭邮箱确认：
+1. 左侧菜单 `Authentication` → `Providers` → `Email`
+2. 找到 `Confirm email` 选项，**关闭**（Disable）
+3. 点击 `Save` 保存
+
+> 关闭后，注册时不再需要验证邮箱，可以直接登录。生产环境请根据需要重新开启。
+
 ### 2. 初始化数据库（一次性）
 进入 Supabase 项目的 `SQL Editor`，执行以下 SQL：
 

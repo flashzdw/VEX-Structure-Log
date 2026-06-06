@@ -190,11 +190,17 @@ export const useStore = create<Store>((set, get) => ({
 
     try {
       await registerUser(email, password, passwordConfirm);
-      // 注册成功后尝试自动登录（如开启 email 确认，注册时不会返回 session）
+      // 注册成功后立即尝试登录拿到 session
+      // （Supabase 默认要求邮箱确认，signUp 不会返回 session，因此需要再 signIn 一次；
+      // 如果 Supabase 项目关闭了"Confirm email"，signUp 已经返回 session，这里也会成功）
       try {
         await loginUser(email, password);
-      } catch {
-        /* 若 Supabase 要求 email 确认，这里会失败；让用户去邮箱完成 */
+      } catch (loginErr) {
+        throw new Error(
+          '注册成功，但自动登录失败：' +
+            (loginErr instanceof Error ? loginErr.message : '未知错误') +
+            '。如需注册后立即使用，请到 Supabase 控制台 → Authentication → Providers → Email 中关闭 "Confirm email"。'
+        );
       }
       const user = await getCurrentUserAsync();
       set({ user, isLoggedIn: !!user });
