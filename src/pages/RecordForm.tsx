@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Upload, X, Star, Flag, Users, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
-import { useStore } from '../store-pocketbase';
+import { useStore } from '../store-supabase';
 import { translations } from '../i18n';
 import { Module } from '../types';
 import { clsx } from 'clsx';

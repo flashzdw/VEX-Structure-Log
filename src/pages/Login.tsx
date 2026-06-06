@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useStore } from '../store-pocketbase';
+import { useStore } from '../store-supabase';
 import { LogIn, UserPlus, Loader2 } from 'lucide-react';
 
 export default function Login() {

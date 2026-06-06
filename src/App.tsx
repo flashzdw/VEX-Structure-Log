@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import { Plus, Globe, Download, Upload, X, Home, Cog, Settings, CheckCircle, AlertCircle, AlertTriangle, Info, LogOut, User, Loader2 } from 'lucide-react';
-import { useStore } from './store-pocketbase';
+import { useStore } from './store-supabase';
 import { translations } from './i18n';
 import HomePage from './pages/Home';
 import RecordForm from './pages/RecordForm';
