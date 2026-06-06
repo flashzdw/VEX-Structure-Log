@@ -1,7 +1,7 @@
 # Tasks
 
 - [x] Task 1: 重构 `src/App.tsx` 的 Navigation 顶栏
-  - [x] SubTask 1.1: 移除左侧 "让每一次的发生都有迹可循。/Make every 'happening' traceable. —— TEAM 8009." 三行文案块，替换为单一 "工程进度管理!" 标题
+  - [x] SubTask 1.1: **删除** 左侧 "让每一次的发生都有迹可循。/Make every 'happening' traceable. —— TEAM 8009." 三行文案块；顶栏左侧不再保留任何文字
   - [x] SubTask 1.2: 移除每个 Tab / 按钮下方的英文副标题（Home / New / Export / Export Data / Import Data / Settings / Chinese / EN 等），并去掉 `min-w-[72px]` / `min-w-[88px]`
   - [x] SubTask 1.3: 新增 `useState` 控制汉堡菜单开合；在 < 640px 时把 Tab 链接 / 按钮 / 用户邮箱 / 退出按钮收纳到浮层中；浮层用 `fixed top-20 inset-x-0 z-50`，点击链接后自动关闭
   - [x] SubTask 1.4: 使用 Tailwind 的 `sm:hidden` / `hidden sm:flex` 控制桌面/移动两套布局的显隐
@@ -9,6 +9,7 @@
 
 - [x] Task 2: 适配首页 `src/pages/Home.tsx` 移动端样式
   - [x] SubTask 2.1: Hero 标题 `text-6xl` 改为 `text-3xl sm:text-5xl md:text-6xl`；卡片内边距 `p-10` 改为 `p-6 sm:p-10`
+  - [x] SubTask 2.1b: **替换 Hero 副标题**：把 "工程进度管理!" / "Engineering Notes Management!" 替换为原激励语 "让每一次的发生都有迹可循。" / "Make every 'happening' traceable."，并在下方追加署名行 "—— TEAM 8009."
   - [x] SubTask 2.2: 4 列统计卡 `lg:grid-cols-4` 保留，但保证 < 640px 下为 `grid-cols-1`（已是默认）；2 列快速信息卡 `md:grid-cols-2` 同理
   - [x] SubTask 2.3: 筛选按钮文字 "筛选" 在 < 640px 下隐藏（`hidden sm:inline`），只显示图标 + 数字徽标
   - [x] SubTask 2.4: 头部 "新建记录 / 筛选" 容器加 `flex-wrap`，允许窄屏换行

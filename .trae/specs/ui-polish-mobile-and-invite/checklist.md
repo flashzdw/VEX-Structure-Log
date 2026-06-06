@@ -2,7 +2,7 @@
 
 ## 顶栏 (App.tsx)
 - [x] 顶栏左侧文案块 "让每一次的发生都有迹可循。/Make every 'happening' traceable. —— TEAM 8009." 已被删除
-- [x] 顶栏左侧显示 "工程进度管理!" 单行文本
+- [x] 顶栏左侧不再保留任何文字（彻底清空，不是替换）
 - [x] 顶栏每个 Tab / 按钮下方的英文副标题（Home / New / Export / Export Data / Import Data / Settings / Chinese / EN 等）已全部移除
 - [x] Tab 按钮不再使用 `min-w-[72px]` / `min-w-[88px]`，宽度由内容决定
 - [x] 语言切换按钮在中文环境下仅显示 "中文"，英文环境下仅显示 "English"
@@ -15,6 +15,7 @@
 ## 首页 (Home.tsx)
 - [x] Hero 标题在 < 640px 下字号降为 `text-3xl`，桌面端保持 `text-6xl`
 - [x] Hero 卡片内边距在 < 640px 下为 `p-6`，桌面端为 `p-10`
+- [x] Hero 副标题 "工程进度管理!" / "Engineering Notes Management!" 已被原激励语替换为 "让每一次的发生都有迹可循。" / "Make every 'happening' traceable."，并新增 "—— TEAM 8009." 署名行
 - [x] 4 个统计卡在 < 640px 下纵向堆叠（单列）
 - [x] 2 个快速信息卡在 < 640px 下纵向堆叠（单列）
 - [x] 筛选按钮在 < 640px 下只显示图标 + 数字徽标，文字 "筛选" 隐藏

@@ -7,7 +7,8 @@
 - **加入队伍入口不明显**：当前 Settings 页中 "加入现有队伍" 入口是次要虚线按钮，新用户第一眼只会看到 "添加新队伍"，体验上 "创建" 和 "加入" 是同等重要的两条路径，却把 "加入" 放到了边角位置。
 
 ## What Changes
-- **顶栏左侧文案**：把 "让每一次的发生都有迹可循。/Make every 'happening' traceable. —— TEAM 8009." 替换为单一的 "工程进度管理!" 文本，与首页 Hero 副标题统一
+- **顶栏左侧文案**：**删除** "让每一次的发生都有迹可循。/Make every 'happening' traceable. —— TEAM 8009." 三行激励语（顶栏左侧不再保留任何文字）
+- **首页 Hero 副标题**：把 "工程进度管理!" / "Engineering Notes Management!" **替换** 为原激励语 "让每一次的发生都有迹可循。" / "Make every 'happening' traceable."，并在下方追加 "—— TEAM 8009." 署名行；Hero 标题 "LEVEL UP🏆" 与 "2026-2027 VIQRC" 保持不变
 - **顶栏 Tab 按钮**：移除每个 Tab 按钮下方的英文小字（Home / New / Export / Export Data / Import Data / Settings / Chinese / EN 等），仅保留中文标签
 - **顶栏整体结构**：登录态顶栏在窄屏（< 640px）下切换为"汉堡菜单"：点击展开浮层，列出所有 Tab 与用户操作；用户邮箱 + 退出按钮合并到浮层底部
 - **首页 Hero**：`text-6xl` 标题在移动端降为 `text-3xl`，Hero 卡片内边距 `p-10` 在移动端降为 `p-6`
@@ -35,18 +36,35 @@
 
 ## ADDED Requirements
 
-### Requirement: 顶栏左侧文案统一
-系统 SHALL 在登录态的顶栏左侧展示单一文案 "工程进度管理!"，不再保留 "让每一次的发生都有迹可循。" / "Make every 'happening' traceable." / "—— TEAM 8009." 等旧文案。
-- 字号保持与原 `text-sm font-medium` 一致或略大（`text-base`）
-- 移动端下隐藏（顶栏只剩 Logo / 标题图标 + 汉堡按钮）
+### Requirement: 顶栏左侧文案清空
+系统 SHALL 在登录态的顶栏左侧**不再保留**任何文字。
+- 原 "让每一次的发生都有迹可循。/Make every 'happening' traceable. —— TEAM 8009." 三行文案被完全删除
+- 顶栏左侧在桌面端 / 移动端下均为空，Tab 链接 / 汉堡按钮占据全部可用空间
+- 顶栏高度从 `h-20` 适当收紧（保持与 `h-16` / `h-20` 原状一致即可；本次不再调整高度）
 
 #### Scenario: 桌面端访问
 - **WHEN** 屏幕宽度 ≥ 640px
-- **THEN** 顶栏左侧显示 "工程进度管理!"，右侧显示所有 Tab 链接
+- **THEN** 顶栏左侧无文字，右侧显示所有 Tab 链接
 
 #### Scenario: 移动端访问
 - **WHEN** 屏幕宽度 < 640px
-- **THEN** 顶栏左侧仅显示 "工程进度管理!"，所有 Tab 链接隐藏并收纳到汉堡菜单
+- **THEN** 顶栏左侧无文字，右侧显示汉堡按钮
+
+### Requirement: 首页 Hero 副标题改为原激励语
+系统 SHALL 在 Home Hero 副标题位置展示原顶栏的激励语。
+- 副标题文案（中文）："让每一次的发生都有迹可循。"
+- 副标题文案（英文）："Make every 'happening' traceable."
+- 副标题下方追加署名行："—— TEAM 8009."（中文 / 英文均显示）
+- 原 "工程进度管理!" / "Engineering Notes Management!" 文本被删除
+- Hero 标题 "LEVEL UP🏆" 与 "2026-2027 VIQRC" 保持不变
+
+#### Scenario: 中文环境访问
+- **WHEN** `language === 'zh'`
+- **THEN** Hero 副标题显示 "让每一次的发生都有迹可循。" + "—— TEAM 8009."
+
+#### Scenario: 英文环境访问
+- **WHEN** `language === 'en'`
+- **THEN** Hero 副标题显示 "Make every 'happening' traceable." + "—— TEAM 8009."
 
 ### Requirement: 顶栏 Tab 去除英文副标题
 系统 SHALL 在顶栏每个 Tab / 操作按钮内部仅展示一行中文标签，不再展示 `Home` / `New` / `Export` / `Export Data` / `Import Data` / `Settings` / `Chinese` / `EN` 等英文小字。
@@ -160,15 +178,20 @@
 
 ### Requirement: 顶栏整体
 将原本 "左侧激励语 + 右侧 Tab 平铺" 的桌面端布局，改为：
-- 桌面端：左侧 "工程进度管理!"，右侧 Tab 平铺（每个 Tab 仅一行中文 / 英文）
-- 移动端：左侧 "工程进度管理!"，右侧汉堡按钮；浮层内含全部 Tab 与用户操作
+- 桌面端：左侧无文字，右侧 Tab 平铺（每个 Tab 仅一行中文 / 英文）
+- 移动端：左侧无文字，右侧汉堡按钮；浮层内含全部 Tab 与用户操作
 
 ## REMOVED Requirements
 
 ### Requirement: 顶栏左侧激励语块
-**Reason**: 与首页 Hero 中的 "工程进度管理!" 副标题语义重复；移除以减少视觉噪声
+**Reason**: 将激励语从顶栏转移到首页 Hero 副标题位置后，顶栏左侧不再需要文字
 
 **Migration**: 不需要迁移，直接删除 `App.tsx` 中 Navigation 顶部的 "让每一次的发生都有迹可循。" / "Make every 'happening' traceable." / "—— TEAM 8009." 文案块
+
+### Requirement: 首页 Hero 副标题 "工程进度管理!"
+**Reason**: 与原顶栏激励语 "让每一次的发生都有迹可循。" 语义重复；改为更直观的品牌口号
+
+**Migration**: 不需要迁移，直接在 `Home.tsx` 中把 `{language === 'zh' ? '工程进度管理!' : 'Engineering Notes Management!'}` 替换为原激励语 + "—— TEAM 8009."
 
 ### Requirement: 顶栏 Tab 双语副标题
 **Reason**: 占用横向空间且在移动端会导致溢出；移除以提升窄屏可读性

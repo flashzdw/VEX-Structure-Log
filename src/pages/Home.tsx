@@ -94,7 +94,10 @@ export default function Home() {
               {language === 'zh' ? 'LEVEL UP🏆' : 'LEVEL UP🏆'}
             </h1>
             <p className="text-lg text-gray-700 mb-3">2026-2027 VIQRC</p>
-            <p className="text-base text-gray-500">{language === 'zh' ? '工程进度管理!' : 'Engineering Notes Management!'}</p>
+            <p className="text-base text-gray-500">
+              {language === 'zh' ? '让每一次的发生都有迹可循。' : 'Make every "happening" traceable.'}
+            </p>
+            <p className="text-xs text-gray-400 mt-1">—— TEAM 8009.</p>
           </div>
         </div>
 

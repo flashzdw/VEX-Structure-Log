@@ -102,11 +102,7 @@ function Navigation() {
     <>
       <nav className="border-b border-gray-200 bg-white sticky top-0 z-40 overflow-x-hidden">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between h-20">
-            <div className="flex items-center text-gray-900 font-semibold text-base sm:text-lg whitespace-nowrap">
-              工程进度管理!
-            </div>
-
+          <div className="flex items-center justify-end h-20 w-full">
             <div className="hidden sm:flex items-center gap-2">
               <Link
                 to="/"
