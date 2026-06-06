@@ -74,22 +74,6 @@ export default function ExportPage() {
     padding: 20px;
     color: #1f2937;
   }
-  .header {
-    text-align: right;
-    border-bottom: 1px solid #e5e7eb;
-    padding-bottom: 20px;
-    margin-bottom: 40px;
-  }
-  .slogan {
-    font-size: 14px;
-    font-weight: 500;
-    color: #4b5563;
-    margin-bottom: 4px;
-  }
-  .team {
-    font-size: 12px;
-    color: #6b7280;
-  }
   .title-section {
     text-align: center;
     margin-bottom: 40px;
@@ -175,11 +159,6 @@ export default function ExportPage() {
 </style>
 </head>
 <body>
-<div class="header">
-  <div class="slogan">让每一次的发生都有迹可循。</div>
-  <div class="team">—— TEAM 8009.</div>
-</div>
-
 <div class="title-section">
   <h1>VIQRC 工程进度管理</h1>
   <div class="subtitle">结构改动记录 - ${new Date().toLocaleDateString()}</div>

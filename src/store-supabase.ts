@@ -16,6 +16,7 @@ import {
   subscribeToRecords,
   subscribeToTeams,
   joinTeamByInviteCode,
+  getTeamInviteCode,
 } from './api/supabase';
 
 interface ImportError {
@@ -53,6 +54,7 @@ interface Store {
 
   addTeam: (name: string) => Promise<void>;
   joinTeam: (inviteCode: string) => Promise<void>;
+  getTeamInviteCode: (teamId: string) => Promise<string>;
   updateTeam: (id: string, name: string) => Promise<void>;
   deleteTeam: (id: string) => Promise<void>;
   selectTeam: (teamId: string | null) => void;
@@ -338,6 +340,16 @@ export const useStore = create<Store>((set, get) => ({
       throw error;
     } finally {
       set({ loading: false });
+    }
+  },
+
+  getTeamInviteCode: async (teamId) => {
+    try {
+      const code = await getTeamInviteCode(teamId);
+      return code;
+    } catch (error) {
+      set({ error: error instanceof Error ? error.message : '获取邀请码失败' });
+      throw error;
     }
   },
 

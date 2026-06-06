@@ -363,6 +363,35 @@ export async function deleteTeam(id: string) {
   }
 }
 
+/**
+ * 读取指定队伍的邀请码（仅队长可读）
+ */
+export async function getTeamInviteCode(teamId: string): Promise<string> {
+  ensureClient();
+  const { data: userData } = await supabase.auth.getUser();
+  const user = userData.user;
+  if (!user) {
+    throw new Error('请先登录');
+  }
+
+  const { data, error } = await supabase
+    .from('teams')
+    .select('invite_code, owner_id')
+    .eq('id', teamId)
+    .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+  if (!data) {
+    throw new Error('队伍不存在');
+  }
+  if ((data as SBTeam).owner_id !== user.id) {
+    throw new Error('仅队长可查看邀请码');
+  }
+  return (data as SBTeam).invite_code;
+}
+
 // ============================================================================
 // Auth
 // ============================================================================

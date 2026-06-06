@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
-import { Plus, Globe, Download, Upload, X, Home, Cog, Settings, CheckCircle, AlertCircle, AlertTriangle, Info, LogOut, User, Loader2 } from 'lucide-react';
+import { Plus, Globe, Download, Upload, X, Home, Cog, Settings, CheckCircle, AlertCircle, AlertTriangle, Info, LogOut, User, Loader2, Menu } from 'lucide-react';
 import { useStore } from './store-supabase';
 import { translations } from './i18n';
 import HomePage from './pages/Home';
@@ -44,6 +44,9 @@ function Navigation() {
     skipped: number;
     errors: Array<{ message: string }>;
   } | null>(null);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+
+  const closeMobileMenu = () => setShowMobileMenu(false);
 
   const isActive = (path: string) => {
     if (path === '/' && location.pathname === '/') return true;
@@ -97,116 +100,177 @@ function Navigation() {
 
   return (
     <>
-      <nav className="border-b border-gray-200 bg-white sticky top-0 z-40">
-        <div className="max-w-4xl mx-auto px-6">
+      <nav className="border-b border-gray-200 bg-white sticky top-0 z-40 overflow-x-hidden">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-20">
-            <div className="flex flex-col justify-center text-right">
-              <p className="text-sm font-medium text-gray-700">{language === 'zh' ? '让每一次的发生都有迹可循。' : 'Make every "happening" traceable.'}</p>
-              <p className="text-xs text-gray-500">—— TEAM 8009.</p>
+            <div className="flex items-center text-gray-900 font-semibold text-base sm:text-lg whitespace-nowrap">
+              工程进度管理!
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="hidden sm:flex items-center gap-2">
               <Link
                 to="/"
                 className={clsx(
-                  "px-4 py-3 rounded-full text-center transition-all duration-200 min-w-[72px]",
+                  "px-4 py-2 rounded-full text-center transition-all duration-200 text-sm font-medium whitespace-nowrap",
                   isActive('/') && !isActive('/new') && !isActive('/record') && !isActive('/edit') && !isActive('/export')
                     ? "bg-gray-100 text-gray-900"
                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                 )}
               >
-                <span className="block text-sm font-medium">首页</span>
-                <span className="block text-xs opacity-70">Home</span>
+                {language === 'zh' ? '首页' : 'Home'}
               </Link>
 
               <Link
                 to="/new"
                 className={clsx(
-                  "px-4 py-3 rounded-full text-center transition-all duration-200 min-w-[72px]",
+                  "px-4 py-2 rounded-full text-center transition-all duration-200 text-sm font-medium whitespace-nowrap",
                   isActive('/new')
                     ? "bg-gray-100 text-gray-900"
                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                 )}
               >
-                <span className="block text-sm font-medium">新建</span>
-                <span className="block text-xs opacity-70">New</span>
+                {language === 'zh' ? '新建' : 'New'}
               </Link>
 
               <Link
                 to="/export"
                 className={clsx(
-                  "px-4 py-3 rounded-full text-center transition-all duration-200 min-w-[72px]",
+                  "px-4 py-2 rounded-full text-center transition-all duration-200 text-sm font-medium whitespace-nowrap",
                   isActive('/export')
                     ? "bg-gray-100 text-gray-900"
                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                 )}
               >
-                <span className="block text-sm font-medium">导出</span>
-                <span className="block text-xs opacity-70">Export</span>
+                {language === 'zh' ? '导出' : 'Export'}
               </Link>
 
               <button
                 onClick={handleExport}
                 disabled={records.length === 0}
                 className={clsx(
-                  "px-4 py-3 rounded-full text-center transition-all duration-200 min-w-[88px]",
+                  "px-4 py-2 rounded-full text-center transition-all duration-200 text-sm font-medium whitespace-nowrap",
                   records.length === 0
                     ? "text-gray-400 cursor-not-allowed"
                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                 )}
               >
-                <span className="block text-sm font-medium">导出数据</span>
-                <span className="block text-xs opacity-70">Export Data</span>
+                {language === 'zh' ? '导出数据' : 'Export Data'}
               </button>
 
               <button
                 onClick={() => setShowImportModal(true)}
-                className="px-4 py-3 rounded-full text-center text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 min-w-[88px]"
+                className="px-4 py-2 rounded-full text-center text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 text-sm font-medium whitespace-nowrap"
               >
-                <span className="block text-sm font-medium">导入数据</span>
-                <span className="block text-xs opacity-70">Import Data</span>
+                {language === 'zh' ? '导入数据' : 'Import Data'}
               </button>
 
               <Link
                 to="/settings"
                 className={clsx(
-                  "px-4 py-3 rounded-full text-center transition-all duration-200 min-w-[72px]",
+                  "px-4 py-2 rounded-full text-center transition-all duration-200 text-sm font-medium whitespace-nowrap",
                   isActive('/settings')
                     ? "bg-gray-100 text-gray-900"
                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                 )}
               >
-                <span className="block text-sm font-medium">{language === 'zh' ? '设置' : 'Settings'}</span>
-                <span className="block text-xs opacity-70">{language === 'zh' ? 'Settings' : 'Settings'}</span>
+                {language === 'zh' ? '设置' : 'Settings'}
               </Link>
 
               <button
                 onClick={() => setLanguage(language === 'zh' ? 'en' : 'zh')}
-                className="px-4 py-3 rounded-full text-center text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 min-w-[72px]"
+                className="px-4 py-2 rounded-full text-center text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 text-sm font-medium whitespace-nowrap"
               >
-                <span className="block text-sm font-medium">{language === 'zh' ? '中文' : 'English'}</span>
-                <span className="block text-xs opacity-70">{language === 'zh' ? 'Chinese' : 'EN'}</span>
+                {language === 'zh' ? '中文' : 'English'}
               </button>
-              
+
               <div className="flex items-center gap-2 ml-2 border-l border-gray-200 pl-4">
                 <div className="flex items-center gap-2 text-sm text-gray-700">
                   <User className="w-4 h-4" />
-                  <span>{user?.email}</span>
+                  <span className="truncate max-w-[160px]">{user?.email}</span>
                 </div>
                 <button
                   onClick={logout}
-                  className="px-4 py-3 rounded-full text-center text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200"
+                  className="px-4 py-2 rounded-full text-center text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 text-sm font-medium flex items-center gap-1 whitespace-nowrap"
                 >
-                  <span className="block text-sm font-medium flex items-center gap-1">
-                    <LogOut className="w-4 h-4" />
-                    退出
-                  </span>
+                  <LogOut className="w-4 h-4" />
+                  {language === 'zh' ? '退出' : 'Logout'}
                 </button>
               </div>
             </div>
+
+            <button
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              className="sm:hidden p-2 rounded-full text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+              aria-label="Menu"
+            >
+              {showMobileMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
         </div>
       </nav>
+
+      {showMobileMenu && (
+        <div className="sm:hidden fixed inset-x-0 top-20 z-50 bg-white border-b border-gray-200 shadow-lg max-h-[calc(100vh-5rem)] overflow-y-auto">
+          <div className="px-4 py-3 space-y-1">
+            <Link to="/" onClick={closeMobileMenu} className={clsx(
+              "block px-4 py-3 rounded-xl text-sm font-medium",
+              isActive('/') && !isActive('/new') && !isActive('/record') && !isActive('/edit') && !isActive('/export')
+                ? "bg-gray-100 text-gray-900"
+                : "text-gray-700 hover:bg-gray-50"
+            )}>
+              {language === 'zh' ? '首页' : 'Home'}
+            </Link>
+            <Link to="/new" onClick={closeMobileMenu} className={clsx(
+              "block px-4 py-3 rounded-xl text-sm font-medium",
+              isActive('/new')
+                ? "bg-gray-100 text-gray-900"
+                : "text-gray-700 hover:bg-gray-50"
+            )}>
+              {language === 'zh' ? '新建' : 'New'}
+            </Link>
+            <Link to="/export" onClick={closeMobileMenu} className={clsx(
+              "block px-4 py-3 rounded-xl text-sm font-medium",
+              isActive('/export')
+                ? "bg-gray-100 text-gray-900"
+                : "text-gray-700 hover:bg-gray-50"
+            )}>
+              {language === 'zh' ? '导出' : 'Export'}
+            </Link>
+            <button onClick={() => { handleExport(); closeMobileMenu(); }} disabled={records.length === 0} className={clsx(
+              "w-full text-left block px-4 py-3 rounded-xl text-sm font-medium",
+              records.length === 0
+                ? "text-gray-400 cursor-not-allowed"
+                : "text-gray-700 hover:bg-gray-50"
+            )}>
+              {language === 'zh' ? '导出数据' : 'Export Data'}
+            </button>
+            <button onClick={() => { setShowImportModal(true); closeMobileMenu(); }} className="w-full text-left block px-4 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50">
+              {language === 'zh' ? '导入数据' : 'Import Data'}
+            </button>
+            <Link to="/settings" onClick={closeMobileMenu} className={clsx(
+              "block px-4 py-3 rounded-xl text-sm font-medium",
+              isActive('/settings')
+                ? "bg-gray-100 text-gray-900"
+                : "text-gray-700 hover:bg-gray-50"
+            )}>
+              {language === 'zh' ? '设置' : 'Settings'}
+            </Link>
+            <button onClick={() => { setLanguage(language === 'zh' ? 'en' : 'zh'); closeMobileMenu(); }} className="w-full text-left block px-4 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50">
+              {language === 'zh' ? '中文' : 'English'}
+            </button>
+            <div className="border-t border-gray-200 pt-3 mt-3">
+              <div className="px-4 py-2 text-sm text-gray-700 flex items-center gap-2">
+                <User className="w-4 h-4" />
+                <span className="truncate">{user?.email}</span>
+              </div>
+              <button onClick={() => { logout(); closeMobileMenu(); }} className="w-full flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50">
+                <LogOut className="w-4 h-4" />
+                {language === 'zh' ? '退出' : 'Logout'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showImportModal && (
         <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-6">
