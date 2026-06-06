@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Download, CheckCircle2, FileText } from 'lucide-react';
+import { ArrowLeft, Download, CheckCircle2, FileText, FileJson } from 'lucide-react';
 import { useStore } from '../store-supabase';
 import { Module } from '../types';
 import { clsx } from 'clsx';
@@ -15,7 +15,7 @@ const moduleColors: Record<Module, string> = {
 
 export default function ExportPage() {
   const navigate = useNavigate();
-  const { records } = useStore();
+  const { records, exportData, language } = useStore();
   const [selectedRecords, setSelectedRecords] = useState<Set<string>>(new Set());
 
   const toggleRecord = (id: string) => {
@@ -45,6 +45,23 @@ export default function ExportPage() {
       '其他': '其他',
     };
     return map[module];
+  };
+
+  const handleExportJSON = () => {
+    if (records.length === 0) {
+      alert('没有记录可以导出');
+      return;
+    }
+    const jsonData = exportData();
+    const blob = new Blob([jsonData], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `vex-records-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   const exportToHTML = () => {
@@ -245,23 +262,34 @@ export default function ExportPage() {
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-2xl mx-auto px-6 py-8">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-8">
           <button
             onClick={() => navigate('/')}
-            className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors active:scale-95"
+            className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors active:scale-95 self-start"
           >
             <ArrowLeft className="w-5 h-5" />
             返回
           </button>
-          
-          <button
-            onClick={exportToHTML}
-            disabled={records.length === 0}
-            className="inline-flex items-center gap-2 bg-gray-900 text-white px-6 py-3 rounded-full font-medium text-sm hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
-          >
-            <Download className="w-4 h-4" />
-            导出HTML文件
-          </button>
+
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+            <button
+              onClick={handleExportJSON}
+              disabled={records.length === 0}
+              className="inline-flex items-center justify-center gap-2 bg-gray-900 text-white px-6 py-3 rounded-full font-medium text-sm hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
+            >
+              <FileJson className="w-4 h-4" />
+              {language === 'zh' ? '导出 JSON' : 'Export JSON'}
+            </button>
+
+            <button
+              onClick={exportToHTML}
+              disabled={records.length === 0}
+              className="inline-flex items-center justify-center gap-2 bg-gray-900 text-white px-6 py-3 rounded-full font-medium text-sm hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
+            >
+              <Download className="w-4 h-4" />
+              {language === 'zh' ? '导出HTML文件' : 'Export HTML'}
+            </button>
+          </div>
         </div>
 
         <div className="border border-gray-200 rounded-2xl p-6">

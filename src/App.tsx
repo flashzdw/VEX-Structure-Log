@@ -33,7 +33,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
 
 function Navigation() {
-  const { language, setLanguage, records, exportData, importData, user, logout, isLoggedIn, loading } = useStore();
+  const { language, setLanguage, records, importData, user, logout, isLoggedIn, loading } = useStore();
   const t = translations[language];
   const location = useLocation();
   const [showImportModal, setShowImportModal] = useState(false);
@@ -52,19 +52,6 @@ function Navigation() {
     if (path === '/' && location.pathname === '/') return true;
     if (path !== '/' && location.pathname.startsWith(path)) return true;
     return false;
-  };
-
-  const handleExport = () => {
-    const jsonData = exportData();
-    const blob = new Blob([jsonData], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `vex-records-${new Date().toISOString().split('T')[0]}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -139,19 +126,6 @@ function Navigation() {
               >
                 {language === 'zh' ? '导出' : 'Export'}
               </Link>
-
-              <button
-                onClick={handleExport}
-                disabled={records.length === 0}
-                className={clsx(
-                  "px-4 py-2 rounded-full text-center transition-all duration-200 text-sm font-medium whitespace-nowrap",
-                  records.length === 0
-                    ? "text-gray-400 cursor-not-allowed"
-                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                )}
-              >
-                {language === 'zh' ? '导出数据' : 'Export Data'}
-              </button>
 
               <button
                 onClick={() => setShowImportModal(true)}
@@ -232,14 +206,6 @@ function Navigation() {
             )}>
               {language === 'zh' ? '导出' : 'Export'}
             </Link>
-            <button onClick={() => { handleExport(); closeMobileMenu(); }} disabled={records.length === 0} className={clsx(
-              "w-full text-left block px-4 py-3 rounded-xl text-sm font-medium",
-              records.length === 0
-                ? "text-gray-400 cursor-not-allowed"
-                : "text-gray-700 hover:bg-gray-50"
-            )}>
-              {language === 'zh' ? '导出数据' : 'Export Data'}
-            </button>
             <button onClick={() => { setShowImportModal(true); closeMobileMenu(); }} className="w-full text-left block px-4 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50">
               {language === 'zh' ? '导入数据' : 'Import Data'}
             </button>

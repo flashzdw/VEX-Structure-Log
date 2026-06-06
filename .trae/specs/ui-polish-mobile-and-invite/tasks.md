@@ -36,7 +36,18 @@
   - [x] SubTask 6.3: 视觉验证（DevTools iPhone SE 视口）—— 受限于沙箱环境，Chrome 与 Playwright 浏览器不可用，未能进行截图验证；改用代码审查 + 构建通过作为信号
   - [x] SubTask 6.4: 桌面视口（≥ 1024px）下确认 —— 同上，依赖代码审查
 
+- [x] Task 7: 导出功能整合
+  - [x] SubTask 7.1: 在 `src/App.tsx` 中**删除**顶栏"导出数据"按钮（桌面端 Tab 区），同步**删除**移动端汉堡浮层中的"导出数据"条目；如 `handleExport` 函数仅此一处使用则一并删除，否则保留以备其他用途
+  - [x] SubTask 7.2: 在 `src/store-supabase.ts` 的 `useStore()` 中确认 `exportData` 已暴露（不修改实现）
+  - [x] SubTask 7.3: 在 `src/pages/ExportPage.tsx` 中：
+    - 从 lucide-react 新增导入 `FileJson` 图标
+    - 在 store 解构中加入 `exportData`
+    - 新增 `handleExportJSON()` 函数：调用 `exportData()` 拿到 JSON 字符串 → 创建 Blob（`application/json`）→ 创建临时 `<a>` 标签触发下载，文件名 `vex-records-${YYYY-MM-DD}.json`
+    - 在顶部按钮行中新增"导出 JSON"按钮（黑底实心，`FileJson` 图标），与"导出HTML文件"按钮并排；移动端用 `flex-col sm:flex-row` 上下 / 左右布局
+  - [x] SubTask 7.4: 运行 `npm run check` 与 `npm run build` 必须通过
+
 # Task Dependencies
 - Task 3 必须在 Task 4 之前完成（Settings 复制按钮依赖 store action） ✅
-- Task 1 / 2 / 4 / 5 互相独立，并行执行 ✅
+- Task 1 / 2 / 4 / 5 / 7 互相独立，并行执行 ✅
 - Task 6 在所有 UI 改动后执行 ✅
+- Task 7 独立于 Task 6，可在 Task 6 之后单独执行

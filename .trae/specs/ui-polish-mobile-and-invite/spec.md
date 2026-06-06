@@ -20,18 +20,19 @@
   - 每个已存在队伍的右侧操作区增加 **"复制邀请码"** 按钮（owner 可见），点击后把邀请码写入剪贴板并 toast 提示
   - 在加入队伍表单中增加"不知道邀请码？"提示文案，引导用户向队伍 owner 索取
 - **导出 HTML 模板**：移除头部多余的 `slogan` / `team` 段落，避免与 UI 改动后样式漂移
+- **导出功能整合**：把"导出数据"（JSON 全部数据下载）按钮从顶栏移除，合并到导出页 `/export` 中作为顶部主操作之一；导出页同时保留"导出 PDF（HTML）"功能（通过"导出HTML文件"按钮）
 
 > **BREAKING**：无 API 字段变动；纯 UI / 文案 / 交互层变更。
 
 ## Impact
 - Affected specs: 顶栏导航、首页 Hero、记录列表、Settings（队伍管理）、导出 HTML
 - Affected code:
-  - `src/App.tsx`（Navigation 组件：左侧文案 + Tab 文案 + 移动端汉堡菜单）
+  - `src/App.tsx`（Navigation 组件：左侧文案 + Tab 文案 + 移动端汉堡菜单 + 移除"导出数据"按钮）
   - `src/pages/Home.tsx`（Hero 标题、统计卡片、记录卡片、搜索筛选在窄屏下的样式）
   - `src/pages/Settings.tsx`（队伍管理：等权重创建/加入按钮、复制邀请码、提示文案）
   - `src/api/supabase.ts`（新增 `getTeamInviteCode(teamId)`：仅 owner 可读邀请码）
   - `src/store-supabase.ts`（暴露 `getTeamInviteCode` action）
-  - `src/pages/ExportPage.tsx`（导出 HTML 模板：移除 slogan 段落）
+  - `src/pages/ExportPage.tsx`（导出 HTML 模板：移除 slogan 段落 + 顶部新增"导出 JSON（全部数据）"主按钮）
   - `src/index.css`（新增 `body { overflow-x: hidden }` 兜底；可选）
 
 ## ADDED Requirements
@@ -174,6 +175,39 @@
 - **WHEN** 屏幕宽度 < 640px 且用户点击编辑 / 删除 / 复制按钮
 - **THEN** 按钮可正常触发，且不会误触相邻按钮
 
+### Requirement: 顶栏"导出数据"按钮移除
+系统 SHALL 从顶栏（桌面端 Tab 区 + 移动端汉堡浮层）移除"导出数据"按钮。
+- 桌面端 Tab 区不再显示"导出数据 / Export Data"按钮
+- 移动端汉堡浮层不再包含"导出数据 / Export Data"条目
+- 顶栏仅保留：首页 / 新建 / 导出（→ /export 页面）/ 导入数据 / 设置 / 语言切换 + 用户邮箱 + 退出按钮
+- JSON 数据导出能力由 `ExportPage` 接管（见下一条 Requirement）
+
+#### Scenario: 桌面端访问
+- **WHEN** 屏幕宽度 ≥ 640px 且用户查看顶栏
+- **THEN** 顶栏无"导出数据"按钮
+
+#### Scenario: 移动端访问
+- **WHEN** 屏幕宽度 < 640px 且用户展开汉堡浮层
+- **THEN** 浮层内无"导出数据"条目
+
+### Requirement: ExportPage 顶部"导出 JSON"主按钮
+系统 SHALL 在 `/export` 页面顶部新增"导出 JSON（全部数据）"主按钮，与原有的"导出HTML文件"按钮并排显示。
+- 按钮位置：页面顶部 `flex items-center justify-between` 区，与"返回"按钮同行
+- 按钮文案：中文 "导出 JSON"，英文 "Export JSON"
+- 按钮样式：实心黑色 `bg-gray-900 text-white`（与原有"导出HTML文件"一致）
+- 图标：`FileJson`（lucide-react）放在按钮内
+- 点击行为：调用 store 的 `exportData()`，把返回的 JSON 字符串作为 `application/json` Blob 下载，文件名 `vex-records-${YYYY-MM-DD}.json`
+- 禁用状态：当 `records.length === 0` 时按钮禁用
+- "导出HTML文件"按钮保持原状（仍导出 PDF / HTML）
+
+#### Scenario: 用户在 ExportPage 点击"导出 JSON"
+- **WHEN** 用户访问 `/export` 且有记录
+- **THEN** 浏览器下载 `vex-records-2026-06-06.json` 文件
+
+#### Scenario: 用户在 ExportPage 无记录时点击
+- **WHEN** 用户访问 `/export` 且 `records.length === 0`
+- **THEN** "导出 JSON" 与 "导出HTML文件" 按钮均显示为 disabled
+
 ## MODIFIED Requirements
 
 ### Requirement: 顶栏整体
@@ -192,6 +226,10 @@
 **Reason**: 与原顶栏激励语 "让每一次的发生都有迹可循。" 语义重复；改为更直观的品牌口号
 
 **Migration**: 不需要迁移，直接在 `Home.tsx` 中把 `{language === 'zh' ? '工程进度管理!' : 'Engineering Notes Management!'}` 替换为原激励语 + "—— TEAM 8009."
+
+### Requirement: 顶栏"导出数据"按钮
+**Reason**: 顶栏已有"导出" Tab 跳转到 `/export` 页面，把 JSON 导出整合到该页面内可减少顶栏冗余操作
+**Migration**: JSON 导出功能由 `ExportPage` 顶部新加的"导出 JSON"按钮承担；`App.tsx` 中 `handleExport` 函数被同步删除（如果其他地方无引用）
 
 ### Requirement: 顶栏 Tab 双语副标题
 **Reason**: 占用横向空间且在移动端会导致溢出；移除以提升窄屏可读性

@@ -45,6 +45,15 @@
 ## 导出 (ExportPage.tsx)
 - [x] 导出的 HTML 文件头部不再包含 `<div class="header">` slogan 段落
 - [x] HTML 模板的 CSS 中 `.header` / `.slogan` / `.team` 三条规则已被移除
+- [x] 页面顶部新增"导出 JSON"按钮（黑底实心 + `FileJson` 图标）
+- [x] 点击"导出 JSON"按钮成功下载 `vex-records-YYYY-MM-DD.json`
+- [x] 顶部"导出 JSON"与"导出HTML文件"按钮并排，移动端用 `flex-col sm:flex-row` 上下布局
+- [x] 无记录时两个按钮均 disabled
+
+## 顶栏 (App.tsx) 整合后
+- [x] 顶栏桌面端 Tab 区无"导出数据 / Export Data"按钮
+- [x] 顶栏移动端汉堡浮层内无"导出数据 / Export Data"条目
+- [x] `App.tsx` 中 `handleExport` 函数已被删除（顶栏不再触发 JSON 下载）
 
 ## 构建 & 验证
 - [x] `npm run check` 通过（无 TS 报错）
