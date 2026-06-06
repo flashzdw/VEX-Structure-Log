@@ -61,7 +61,7 @@ interface Store {
   
   setLanguage: (lang: Language) => void;
   exportData: () => string;
-  importData: (jsonString: string) => ImportResult;
+  importData: (jsonString: string) => Promise<ImportResult>;
   getStatistics: () => {
     total: number;
     byModule: Record<string, number>;
