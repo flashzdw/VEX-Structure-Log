@@ -168,6 +168,12 @@ export const useStore = create<Store>((set, get) => ({
     set({ loading: true, error: null });
 
     try {
+      // 提前检查环境变量：缺失时给出最清晰的提示，而不是让 Supabase 返回含糊的 "Something went wrong"
+      if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+        throw new Error(
+          'Supabase 未配置：请在 Vercel Project Settings → Environment Variables 中设置 VITE_SUPABASE_URL 和 VITE_SUPABASE_ANON_KEY，然后重新部署。'
+        );
+      }
       await loginUser(email, password);
       const user = await getCurrentUserAsync();
       set({ user, isLoggedIn: true });
@@ -178,7 +184,13 @@ export const useStore = create<Store>((set, get) => ({
 
       return true;
     } catch (error) {
-      set({ error: error instanceof Error ? error.message : '登录失败' });
+      // eslint-disable-next-line no-console
+      console.error('[Supabase login] 详细错误:', error);
+      const msg =
+        error instanceof Error && error.message
+          ? error.message
+          : '登录失败，请稍后重试';
+      set({ error: msg });
       return false;
     } finally {
       set({ loading: false });
@@ -189,6 +201,12 @@ export const useStore = create<Store>((set, get) => ({
     set({ loading: true, error: null });
 
     try {
+      // 同样在注册流程前置检查环境变量
+      if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+        throw new Error(
+          'Supabase 未配置：请在 Vercel Project Settings → Environment Variables 中设置 VITE_SUPABASE_URL 和 VITE_SUPABASE_ANON_KEY，然后重新部署。'
+        );
+      }
       await registerUser(email, password, passwordConfirm);
       // 注册成功后立即尝试登录拿到 session
       // （Supabase 默认要求邮箱确认，signUp 不会返回 session，因此需要再 signIn 一次；
@@ -196,6 +214,8 @@ export const useStore = create<Store>((set, get) => ({
       try {
         await loginUser(email, password);
       } catch (loginErr) {
+        // eslint-disable-next-line no-console
+        console.error('[Supabase register auto-login] 详细错误:', loginErr);
         throw new Error(
           '注册成功，但自动登录失败：' +
             (loginErr instanceof Error ? loginErr.message : '未知错误') +
@@ -212,7 +232,13 @@ export const useStore = create<Store>((set, get) => ({
 
       return !!user;
     } catch (error) {
-      set({ error: error instanceof Error ? error.message : '注册失败' });
+      // eslint-disable-next-line no-console
+      console.error('[Supabase register] 详细错误:', error);
+      const msg =
+        error instanceof Error && error.message
+          ? error.message
+          : '注册失败，请稍后重试';
+      set({ error: msg });
       return false;
     } finally {
       set({ loading: false });
