@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Download, CheckCircle2, FileText } from 'lucide-react';
-import { useStore } from '../store-pocketbase';
+import { useStore } from '../store-supabase';
 import { Module } from '../types';
 import { clsx } from 'clsx';
 

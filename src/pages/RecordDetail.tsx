@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Edit, Trash2, Calendar, User, CheckCircle, AlertCircle, ChevronRight, Users } from 'lucide-react';
-import { useStore } from '../store-pocketbase';
+import { useStore } from '../store-supabase';
 import { Module } from '../types';
 
 const moduleColors: Record< Module, string> = {

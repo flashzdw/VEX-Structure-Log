@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus, Edit2, Trash2, X, Check, Settings as SettingsIcon, AlertCircle, CheckCircle } from 'lucide-react';
-import { useStore } from '../store-pocketbase';
+import { useStore } from '../store-supabase';
 import { clsx } from 'clsx';
 
 export default function Settings() {

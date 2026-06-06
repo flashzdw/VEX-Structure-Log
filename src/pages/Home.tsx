@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Search, Filter, Calendar, User, ChevronRight, Star, Layers, Target, Clock, Users, X, SlidersHorizontal } from 'lucide-react';
-import { useStore } from '../store-pocketbase';
+import { useStore } from '../store-supabase';
 import { translations } from '../i18n';
 import { Module } from '../types';
 import { clsx } from 'clsx';
