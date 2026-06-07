@@ -1,4 +1,141 @@
-<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="32" height="32" fill="#0A0B0D"/>
-<path d="M26.6677 23.7149H8.38057V20.6496H5.33301V8.38159H26.6677V23.7149ZM8.38057 20.6496H23.6201V11.4482H8.38057V20.6496ZM16.0011 16.0021L13.8461 18.1705L11.6913 16.0021L13.8461 13.8337L16.0011 16.0021ZM22.0963 16.0008L19.9414 18.1691L17.7865 16.0008L19.9414 13.8324L22.0963 16.0008Z" fill="#32F08C"/>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- 主背景：液态玻璃渐变 -->
+    <linearGradient id="glassFill" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#E0F2FF" stop-opacity="0.95"/>
+      <stop offset="50%" stop-color="#A5C9FF" stop-opacity="0.75"/>
+      <stop offset="100%" stop-color="#5B8FE8" stop-opacity="0.85"/>
+    </linearGradient>
+
+    <!-- 顶部高光：液态玻璃反光 -->
+    <linearGradient id="topHighlight" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9"/>
+      <stop offset="60%" stop-color="#FFFFFF" stop-opacity="0.0"/>
+    </linearGradient>
+
+    <!-- 底部反光 -->
+    <linearGradient id="bottomGlow" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.0"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.35"/>
+    </linearGradient>
+
+    <!-- 彩虹边缘光晕 -->
+    <linearGradient id="iridescent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FF9AC4"/>
+      <stop offset="20%" stop-color="#C99CFF"/>
+      <stop offset="40%" stop-color="#9CC9FF"/>
+      <stop offset="60%" stop-color="#9CFFD4"/>
+      <stop offset="80%" stop-color="#FFE39C"/>
+      <stop offset="100%" stop-color="#FF9AC4"/>
+    </linearGradient>
+
+    <!-- 笔记本封面渐变 -->
+    <linearGradient id="bookCover" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.65"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.25"/>
+    </linearGradient>
+
+    <!-- 齿轮渐变 -->
+    <linearGradient id="gearGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1E3A8A"/>
+      <stop offset="100%" stop-color="#0F1E47"/>
+    </linearGradient>
+
+    <!-- 高斯模糊：液态玻璃模糊感 -->
+    <filter id="softBlur" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6"/>
+    </filter>
+
+    <!-- 投影 -->
+    <filter id="dropShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="8"/>
+      <feOffset dx="0" dy="6" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.25"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- 彩虹边描边 -->
+    <linearGradient id="rimSheen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFB6E1" stop-opacity="0.9"/>
+      <stop offset="25%" stop-color="#B6C9FF" stop-opacity="0.9"/>
+      <stop offset="50%" stop-color="#B6FFE3" stop-opacity="0.9"/>
+      <stop offset="75%" stop-color="#FFE3B6" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#FFB6E1" stop-opacity="0.9"/>
+    </linearGradient>
+
+    <!-- 圆角矩形裁剪（液态玻璃轮廓） -->
+    <clipPath id="iconClip">
+      <rect x="40" y="40" width="432" height="432" rx="100" ry="100"/>
+    </clipPath>
+  </defs>
+
+  <!-- 1. 底层柔光投影（在裁剪外） -->
+  <rect x="40" y="40" width="432" height="432" rx="100" ry="100" fill="#0F1E47" opacity="0.18" filter="url(#softBlur)" transform="translate(0,12)"/>
+
+  <!-- 2. 主体液态玻璃底 -->
+  <g clip-path="url(#iconClip)">
+    <!-- 渐变底 -->
+    <rect x="40" y="40" width="432" height="432" fill="url(#glassFill)"/>
+
+    <!-- 顶部白色高光（液态玻璃上反光） -->
+    <rect x="40" y="40" width="432" height="200" fill="url(#topHighlight)"/>
+
+    <!-- 底部反光 -->
+    <rect x="40" y="340" width="432" height="132" fill="url(#bottomGlow)"/>
+
+    <!-- 内部彩虹光晕（左上到右下） -->
+    <circle cx="120" cy="120" r="120" fill="#FFB6E1" opacity="0.35" filter="url(#softBlur)"/>
+    <circle cx="400" cy="140" r="100" fill="#B6E1FF" opacity="0.4" filter="url(#softBlur)"/>
+    <circle cx="380" cy="420" r="140" fill="#B6FFE3" opacity="0.35" filter="url(#softBlur)"/>
+    <circle cx="100" cy="420" r="120" fill="#FFE3B6" opacity="0.3" filter="url(#softBlur)"/>
+
+    <!-- 3. 笔记本（中央，倾斜 8°） -->
+    <g transform="rotate(-8 256 280)" filter="url(#dropShadow)">
+      <!-- 笔记本主体 -->
+      <rect x="146" y="160" width="220" height="280" rx="18" fill="url(#bookCover)" stroke="#FFFFFF" stroke-width="2" stroke-opacity="0.6"/>
+
+      <!-- 笔记本装订线 -->
+      <line x1="256" y1="170" x2="256" y2="430" stroke="#FFFFFF" stroke-width="1.5" stroke-opacity="0.5"/>
+
+      <!-- 左侧页：3 条书写线 -->
+      <line x1="170" y1="220" x2="240" y2="220" stroke="#1E3A8A" stroke-width="3" stroke-linecap="round" opacity="0.45"/>
+      <line x1="170" y1="248" x2="240" y2="248" stroke="#1E3A8A" stroke-width="3" stroke-linecap="round" opacity="0.45"/>
+      <line x1="170" y1="276" x2="225" y2="276" stroke="#1E3A8A" stroke-width="3" stroke-linecap="round" opacity="0.45"/>
+
+      <!-- 右侧页：齿轮（VEX 机器人元素） -->
+      <g transform="translate(340 320)">
+        <!-- 齿轮外圈（8 齿） -->
+        <g fill="url(#gearGrad)">
+          <rect x="-7" y="-44" width="14" height="20" rx="2"/>
+          <rect x="-7" y="24" width="14" height="20" rx="2"/>
+          <rect x="-44" y="-7" width="20" height="14" rx="2"/>
+          <rect x="24" y="-7" width="20" height="14" rx="2"/>
+          <rect x="-7" y="-44" width="14" height="20" rx="2" transform="rotate(45)"/>
+          <rect x="-7" y="24" width="14" height="20" rx="2" transform="rotate(45)"/>
+          <rect x="-44" y="-7" width="20" height="14" rx="2" transform="rotate(45)"/>
+          <rect x="24" y="-7" width="20" height="14" rx="2" transform="rotate(45)"/>
+        </g>
+        <!-- 齿轮主体圆 -->
+        <circle r="32" fill="url(#gearGrad)"/>
+        <!-- 齿轮中心镂空 -->
+        <circle r="12" fill="#FFFFFF" fill-opacity="0.85"/>
+        <!-- 齿轮高光 -->
+        <ellipse cx="-10" cy="-14" rx="12" ry="6" fill="#FFFFFF" opacity="0.4"/>
+      </g>
+    </g>
+
+    <!-- 4. 顶部一抹白色"擦痕"高光（液态玻璃特征） -->
+    <path d="M 80 90 Q 180 60 300 80 L 290 110 Q 180 95 90 120 Z" fill="#FFFFFF" opacity="0.55"/>
+  </g>
+
+  <!-- 5. 彩虹边缘描边（液态玻璃 iridescent 边缘光） -->
+  <rect x="40" y="40" width="432" height="432" rx="100" ry="100" fill="none" stroke="url(#rimSheen)" stroke-width="3" stroke-opacity="0.7"/>
+
+  <!-- 6. 内部白色细描边（玻璃厚度感） -->
+  <rect x="44" y="44" width="424" height="424" rx="96" ry="96" fill="none" stroke="#FFFFFF" stroke-width="1" stroke-opacity="0.55"/>
 </svg>
