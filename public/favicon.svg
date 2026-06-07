@@ -46,8 +46,8 @@
     <!-- 顶部高光（液态玻璃特征） -->
     <rect x="40" y="40" width="432" height="180" fill="url(#topShine)" opacity="0.9"/>
 
-    <!-- 3. 中央主体：笔记本 + 齿轮组合（VEX 工程笔记主题） -->
-    <g transform="translate(256 256)">
+    <!-- 3. 中央主体：笔记本 + 齿轮组合（VEX 工程笔记主题，整体放大 1.3x） -->
+    <g transform="translate(256 256) scale(1.3)">
       <!-- 笔记本底（圆角矩形，深灰，与网站 text-gray-900 一致） -->
       <rect x="-110" y="-130" width="220" height="260" rx="24" fill="url(#iconBody)"/>
 
