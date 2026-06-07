@@ -65,6 +65,11 @@
   - [x] SubTask 9.4: 在桌面端（≥ 640px）下，Tab 链接容器 `ml-auto` 让用户胶囊自然靠右；移动端（< 640px）下维持汉堡按钮靠右
   - [x] SubTask 9.5: 运行 `npm run check` 与 `npm run build` 必须通过
 
+- [x] Task 10: 移动端汉堡按钮尺寸调小
+  - [x] SubTask 10.1: 在 `src/App.tsx` 中把移动端汉堡按钮的内边距从 `p-2` 改为 `p-1.5`，图标从 `w-5 h-5` 改为 `w-4 h-4`
+  - [x] SubTask 10.2: 确保按钮位置保持在顶栏右上角（同一坐标）；展开时 `Menu` ↔ `X` 切换均在原位
+  - [x] SubTask 10.3: 运行 `npm run check` 与 `npm run build` 必须通过
+
 # Task Dependencies
 - Task 3 必须在 Task 4 之前完成（Settings 复制按钮依赖 store action） ✅
 - Task 1 / 2 / 4 / 5 / 7 / 8 互相独立，并行执行 ✅

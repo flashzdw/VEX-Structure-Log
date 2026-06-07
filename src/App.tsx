@@ -224,10 +224,10 @@ function Navigation() {
 
             <button
               onClick={() => setShowMobileMenu(!showMobileMenu)}
-              className="sm:hidden p-2 rounded-full text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+              className="sm:hidden p-1.5 rounded-full text-gray-600 hover:text-gray-900 hover:bg-gray-50"
               aria-label="Menu"
             >
-              {showMobileMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {showMobileMenu ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
             </button>
           </div>
         </div>
