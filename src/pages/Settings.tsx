@@ -1,12 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Plus, Edit2, Trash2, X, Check, Settings as SettingsIcon, AlertCircle, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Plus, Edit2, Trash2, X, Check, Settings as SettingsIcon, AlertCircle, CheckCircle, Copy } from 'lucide-react';
 import { useStore } from '../store-supabase';
 import { clsx } from 'clsx';
 
 export default function Settings() {
   const navigate = useNavigate();
-  const { teams, addTeam, updateTeam, deleteTeam, language, user, loading, joinTeam } = useStore();
+  const { teams, addTeam, updateTeam, deleteTeam, language, user, loading, joinTeam, getTeamInviteCode } = useStore();
   const [newTeamName, setNewTeamName] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
@@ -16,6 +16,8 @@ export default function Settings() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [copyStatus, setCopyStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [copyingId, setCopyingId] = useState<string | null>(null);
 
   const validateTeamName = (name: string): string | null => {
     if (!name.trim()) {
@@ -112,16 +114,47 @@ export default function Settings() {
 
   const handleConfirmDelete = async () => {
     if (showDeleteConfirm) {
-      await deleteTeam(showDeleteConfirm);
+      const deletingId = showDeleteConfirm;
       setShowDeleteConfirm(null);
-      setSuccessMessage(language === 'zh' ? '队伍删除成功！' : 'Team deleted successfully!');
-      setTimeout(() => setSuccessMessage(null), 2000);
+      try {
+        await deleteTeam(deletingId);
+        setSuccessMessage(language === 'zh' ? '队伍删除成功！' : 'Team deleted successfully!');
+        setTimeout(() => setSuccessMessage(null), 2000);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : (language === 'zh' ? '删除队伍失败' : 'Failed to delete team');
+        setCopyStatus({ type: 'error', message });
+      }
     }
   };
 
   const handleCancelDelete = () => {
     setShowDeleteConfirm(null);
   };
+
+  const handleCopyInviteCode = async (teamId: string) => {
+    setCopyingId(teamId);
+    try {
+      const code = await getTeamInviteCode(teamId);
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(code);
+        setCopyStatus({ type: 'success', message: '邀请码已复制到剪贴板' });
+      } else {
+        // 降级：使用 prompt 让用户手动复制
+        window.prompt('复制以下邀请码：', code);
+        setCopyStatus({ type: 'success', message: '已显示邀请码，请手动复制' });
+      }
+    } catch (error) {
+      setCopyStatus({ type: 'error', message: error instanceof Error ? error.message : '复制失败' });
+    } finally {
+      setCopyingId(null);
+    }
+  };
+
+  useEffect(() => {
+    if (!copyStatus) return;
+    const t = setTimeout(() => setCopyStatus(null), 2000);
+    return () => clearTimeout(t);
+  }, [copyStatus]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -161,9 +194,30 @@ export default function Settings() {
               </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            {copyStatus && (
+              <div className={clsx(
+                "mb-6 p-4 border rounded-xl",
+                copyStatus.type === 'success' ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"
+              )}>
+                <div className="flex items-center gap-3">
+                  {copyStatus.type === 'success' ? (
+                    <CheckCircle className="w-5 h-5 text-green-600" />
+                  ) : (
+                    <AlertCircle className="w-5 h-5 text-red-600" />
+                  )}
+                  <span className={clsx(
+                    "font-medium",
+                    copyStatus.type === 'success' ? "text-green-800" : "text-red-800"
+                  )}>
+                    {copyStatus.message}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            <div className="grid grid-cols-2 gap-3 mb-6">
               {showAddForm ? (
-                <div className="p-4 bg-gray-50 rounded-xl">
+                <div className="col-span-2 p-4 bg-gray-50 rounded-xl">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     {language === 'zh' ? '新队伍名称' : 'New Team Name'}
                   </label>
@@ -173,7 +227,7 @@ export default function Settings() {
                       <span className="text-sm text-red-700">{errors.newTeam}</span>
                     </div>
                   )}
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <input
                       type="text"
                       value={newTeamName}
@@ -186,39 +240,43 @@ export default function Settings() {
                       className="flex-1 px-4 py-2 border border-gray-300 rounded-full text-sm focus:outline-none focus:border-gray-400"
                       autoFocus
                     />
-                    <button
-                      onClick={handleAddTeam}
-                      className="px-4 py-2 bg-gray-900 text-white rounded-full text-sm font-medium hover:bg-gray-800 active:scale-95 transition-all"
-                    >
-                      <Check className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => {
-                        setShowAddForm(false);
-                        setNewTeamName('');
-                        setErrors({});
-                      }}
-                      className="px-4 py-2 border border-gray-300 text-gray-700 rounded-full text-sm font-medium hover:bg-gray-50 active:scale-95 transition-all"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleAddTeam}
+                        className="flex-1 sm:flex-none px-4 py-2 bg-gray-900 text-white rounded-full text-sm font-medium hover:bg-gray-800 active:scale-95 transition-all"
+                      >
+                        <Check className="w-4 h-4 inline-block" />
+                      </button>
+                      <button
+                        onClick={() => {
+                          setShowAddForm(false);
+                          setNewTeamName('');
+                          setErrors({});
+                        }}
+                        className="flex-1 sm:flex-none px-4 py-2 border border-gray-300 text-gray-700 rounded-full text-sm font-medium hover:bg-gray-50 active:scale-95 transition-all"
+                      >
+                        <X className="w-4 h-4 inline-block" />
+                      </button>
+                    </div>
                   </div>
-                  <p className="mt-2 text-xs text-gray-500">
-                    {language === 'zh' ? '队伍名称将在导出和统计中使用' : 'Team name will be used in exports and statistics'}
-                  </p>
                 </div>
               ) : (
                 <button
                   onClick={() => setShowAddForm(true)}
-                  className="py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-600 hover:border-gray-400 hover:text-gray-700 transition-all flex items-center justify-center gap-2"
+                  className="py-3 bg-gray-900 text-white rounded-xl font-medium hover:bg-gray-800 active:scale-95 transition-all flex items-center justify-center gap-2"
                 >
                   <Plus className="w-5 h-5" />
-                  {language === 'zh' ? '添加新队伍' : 'Add New Team'}
+                  <div className="text-left">
+                    <div className="text-sm">{language === 'zh' ? '添加新队伍' : 'Add New Team'}</div>
+                    <div className="text-[10px] opacity-70 hidden sm:block">
+                      {language === 'zh' ? '你是队长？创建并邀请成员' : "Captain? Create & invite"}
+                    </div>
+                  </div>
                 </button>
               )}
-              
+
               {showJoinForm ? (
-                <div className="p-4 bg-blue-50 rounded-xl border border-blue-200">
+                <div className="col-span-2 p-4 bg-blue-50 rounded-xl border border-blue-200">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     {language === 'zh' ? '输入邀请码' : 'Enter Invite Code'}
                   </label>
@@ -228,7 +286,7 @@ export default function Settings() {
                       <span className="text-sm text-red-700">{errors.join}</span>
                     </div>
                   )}
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <input
                       type="text"
                       value={inviteCode}
@@ -237,35 +295,45 @@ export default function Settings() {
                         setErrors({});
                       }}
                       onKeyPress={(e) => e.key === 'Enter' && handleJoinTeam()}
-                      placeholder={language === 'zh' ? '邀请码' : 'Invite Code'}
+                      placeholder={language === 'zh' ? '8 位邀请码' : '8-char invite code'}
                       className="flex-1 px-4 py-2 border border-gray-300 rounded-full text-sm focus:outline-none focus:border-gray-400"
                       autoFocus
                     />
-                    <button
-                      onClick={handleJoinTeam}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-full text-sm font-medium hover:bg-blue-700 active:scale-95 transition-all"
-                    >
-                      <Check className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => {
-                        setShowJoinForm(false);
-                        setInviteCode('');
-                        setErrors({});
-                      }}
-                      className="px-4 py-2 border border-gray-300 text-gray-700 rounded-full text-sm font-medium hover:bg-gray-50 active:scale-95 transition-all"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleJoinTeam}
+                        className="flex-1 sm:flex-none px-4 py-2 bg-blue-600 text-white rounded-full text-sm font-medium hover:bg-blue-700 active:scale-95 transition-all"
+                      >
+                        <Check className="w-4 h-4 inline-block" />
+                      </button>
+                      <button
+                        onClick={() => {
+                          setShowJoinForm(false);
+                          setInviteCode('');
+                          setErrors({});
+                        }}
+                        className="flex-1 sm:flex-none px-4 py-2 border border-gray-300 text-gray-700 rounded-full text-sm font-medium hover:bg-gray-50 active:scale-95 transition-all"
+                      >
+                        <X className="w-4 h-4 inline-block" />
+                      </button>
+                    </div>
                   </div>
+                  <p className="mt-2 text-xs text-gray-500">
+                    {language === 'zh' ? '不知道邀请码？向你的队长索取 8 位邀请码' : "Don't have one? Ask your team captain for the 8-char code"}
+                  </p>
                 </div>
               ) : (
                 <button
                   onClick={() => setShowJoinForm(true)}
-                  className="py-3 border-2 border-dashed border-blue-300 rounded-xl text-blue-600 hover:border-blue-400 hover:text-blue-700 transition-all flex items-center justify-center gap-2"
+                  className="py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2"
                 >
-                  <ArrowLeft className="w-5 h-5 rotate-[-90deg]" />
-                  {language === 'zh' ? '加入现有队伍' : 'Join Existing Team'}
+                  <Plus className="w-5 h-5" />
+                  <div className="text-left">
+                    <div className="text-sm">{language === 'zh' ? '加入现有队伍' : 'Join Existing Team'}</div>
+                    <div className="text-[10px] opacity-70 hidden sm:block">
+                      {language === 'zh' ? '已有邀请码？输入 8 位码加入' : "Have an invite code? Enter it"}
+                    </div>
+                  </div>
                 </button>
               )}
             </div>
@@ -347,6 +415,14 @@ export default function Settings() {
                           <span className="font-medium text-gray-900">{team.name}</span>
                         </div>
                         <div className="flex gap-2">
+                          <button
+                            onClick={() => handleCopyInviteCode(team.id)}
+                            disabled={copyingId === team.id}
+                            className="p-2.5 text-gray-600 hover:text-gray-900 hover:bg-gray-200 rounded-full transition-all disabled:opacity-50"
+                            title={language === 'zh' ? '复制邀请码' : 'Copy invite code'}
+                          >
+                            <Copy className="w-4 h-4" />
+                          </button>
                           <button
                             onClick={() => handleStartEdit(team.id, team.name)}
                             className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-200 rounded-full transition-all"

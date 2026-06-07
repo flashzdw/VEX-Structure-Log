@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { HashRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
-import { Plus, Globe, Download, Upload, X, Home, Cog, Settings, CheckCircle, AlertCircle, AlertTriangle, Info, LogOut, User, Loader2 } from 'lucide-react';
+import { Plus, Globe, Download, Upload, X, Home, Cog, Settings, CheckCircle, AlertCircle, AlertTriangle, Info, LogOut, User, Loader2, Menu, ChevronDown } from 'lucide-react';
 import { useStore } from './store-supabase';
 import { translations } from './i18n';
 import HomePage from './pages/Home';
@@ -33,7 +33,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
 
 function Navigation() {
-  const { language, setLanguage, records, exportData, importData, user, logout, isLoggedIn, loading } = useStore();
+  const { language, setLanguage, records, importData, user, logout, isLoggedIn, loading } = useStore();
   const t = translations[language];
   const location = useLocation();
   const [showImportModal, setShowImportModal] = useState(false);
@@ -44,24 +44,65 @@ function Navigation() {
     skipped: number;
     errors: Array<{ message: string }>;
   } | null>(null);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [userMenuPos, setUserMenuPos] = useState<{ top: number; right: number } | null>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+  const userMenuButtonRef = useRef<HTMLButtonElement>(null);
+
+  const closeMobileMenu = () => setShowMobileMenu(false);
+
+  const getEmailPrefix = (email?: string): string => {
+    if (!email) return '';
+    const atIdx = email.indexOf('@');
+    return atIdx === -1 ? email : email.slice(0, atIdx);
+  };
+
+  const updateUserMenuPos = () => {
+    if (!userMenuButtonRef.current) return;
+    const rect = userMenuButtonRef.current.getBoundingClientRect();
+    setUserMenuPos({
+      top: rect.bottom + 8,
+      right: window.innerWidth - rect.right,
+    });
+  };
+
+  const toggleUserMenu = () => {
+    if (showUserMenu) {
+      setShowUserMenu(false);
+      return;
+    }
+    updateUserMenuPos();
+    setShowUserMenu(true);
+  };
+
+  // Close user menu when clicking outside; reposition on scroll/resize
+  useEffect(() => {
+    if (!showUserMenu) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (
+        userMenuRef.current && !userMenuRef.current.contains(target) &&
+        userMenuButtonRef.current && !userMenuButtonRef.current.contains(target)
+      ) {
+        setShowUserMenu(false);
+      }
+    };
+    const handleScrollOrResize = () => updateUserMenuPos();
+    document.addEventListener('mousedown', handleClickOutside);
+    window.addEventListener('scroll', handleScrollOrResize, { passive: true });
+    window.addEventListener('resize', handleScrollOrResize);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('scroll', handleScrollOrResize);
+      window.removeEventListener('resize', handleScrollOrResize);
+    };
+  }, [showUserMenu]);
 
   const isActive = (path: string) => {
     if (path === '/' && location.pathname === '/') return true;
     if (path !== '/' && location.pathname.startsWith(path)) return true;
     return false;
-  };
-
-  const handleExport = () => {
-    const jsonData = exportData();
-    const blob = new Blob([jsonData], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `vex-records-${new Date().toISOString().split('T')[0]}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -97,116 +138,182 @@ function Navigation() {
 
   return (
     <>
-      <nav className="border-b border-gray-200 bg-white sticky top-0 z-40">
-        <div className="max-w-4xl mx-auto px-6">
-          <div className="flex items-center justify-between h-20">
-            <div className="flex flex-col justify-center text-right">
-              <p className="text-sm font-medium text-gray-700">{language === 'zh' ? '让每一次的发生都有迹可循。' : 'Make every "happening" traceable.'}</p>
-              <p className="text-xs text-gray-500">—— TEAM 8009.</p>
-            </div>
-
-            <div className="flex items-center gap-2">
+      <nav className="border-b border-gray-200 bg-white sticky top-0 z-40 overflow-x-hidden">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <div className="flex items-center h-20 w-full">
+            <div className="hidden sm:flex items-center gap-2 flex-1 min-w-0">
               <Link
                 to="/"
                 className={clsx(
-                  "px-4 py-3 rounded-full text-center transition-all duration-200 min-w-[72px]",
+                  "px-4 py-2 rounded-full text-center transition-all duration-200 text-sm font-medium whitespace-nowrap",
                   isActive('/') && !isActive('/new') && !isActive('/record') && !isActive('/edit') && !isActive('/export')
                     ? "bg-gray-100 text-gray-900"
                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                 )}
               >
-                <span className="block text-sm font-medium">首页</span>
-                <span className="block text-xs opacity-70">Home</span>
+                {language === 'zh' ? '首页' : 'Home'}
               </Link>
 
               <Link
                 to="/new"
                 className={clsx(
-                  "px-4 py-3 rounded-full text-center transition-all duration-200 min-w-[72px]",
+                  "px-4 py-2 rounded-full text-center transition-all duration-200 text-sm font-medium whitespace-nowrap",
                   isActive('/new')
                     ? "bg-gray-100 text-gray-900"
                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                 )}
               >
-                <span className="block text-sm font-medium">新建</span>
-                <span className="block text-xs opacity-70">New</span>
+                {language === 'zh' ? '新建' : 'New'}
               </Link>
 
               <Link
                 to="/export"
                 className={clsx(
-                  "px-4 py-3 rounded-full text-center transition-all duration-200 min-w-[72px]",
+                  "px-4 py-2 rounded-full text-center transition-all duration-200 text-sm font-medium whitespace-nowrap",
                   isActive('/export')
                     ? "bg-gray-100 text-gray-900"
                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                 )}
               >
-                <span className="block text-sm font-medium">导出</span>
-                <span className="block text-xs opacity-70">Export</span>
+                {language === 'zh' ? '导出' : 'Export'}
               </Link>
 
               <button
-                onClick={handleExport}
-                disabled={records.length === 0}
-                className={clsx(
-                  "px-4 py-3 rounded-full text-center transition-all duration-200 min-w-[88px]",
-                  records.length === 0
-                    ? "text-gray-400 cursor-not-allowed"
-                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                )}
-              >
-                <span className="block text-sm font-medium">导出数据</span>
-                <span className="block text-xs opacity-70">Export Data</span>
-              </button>
-
-              <button
                 onClick={() => setShowImportModal(true)}
-                className="px-4 py-3 rounded-full text-center text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 min-w-[88px]"
+                className="px-4 py-2 rounded-full text-center text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 text-sm font-medium whitespace-nowrap"
               >
-                <span className="block text-sm font-medium">导入数据</span>
-                <span className="block text-xs opacity-70">Import Data</span>
+                {language === 'zh' ? '导入数据' : 'Import Data'}
               </button>
 
               <Link
                 to="/settings"
                 className={clsx(
-                  "px-4 py-3 rounded-full text-center transition-all duration-200 min-w-[72px]",
+                  "px-4 py-2 rounded-full text-center transition-all duration-200 text-sm font-medium whitespace-nowrap",
                   isActive('/settings')
                     ? "bg-gray-100 text-gray-900"
                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                 )}
               >
-                <span className="block text-sm font-medium">{language === 'zh' ? '设置' : 'Settings'}</span>
-                <span className="block text-xs opacity-70">{language === 'zh' ? 'Settings' : 'Settings'}</span>
+                {language === 'zh' ? '设置' : 'Settings'}
               </Link>
 
               <button
                 onClick={() => setLanguage(language === 'zh' ? 'en' : 'zh')}
-                className="px-4 py-3 rounded-full text-center text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 min-w-[72px]"
+                className="px-4 py-2 rounded-full text-center text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 text-sm font-medium whitespace-nowrap"
               >
-                <span className="block text-sm font-medium">{language === 'zh' ? '中文' : 'English'}</span>
-                <span className="block text-xs opacity-70">{language === 'zh' ? 'Chinese' : 'EN'}</span>
+                {language === 'zh' ? '中文' : 'English'}
               </button>
-              
-              <div className="flex items-center gap-2 ml-2 border-l border-gray-200 pl-4">
-                <div className="flex items-center gap-2 text-sm text-gray-700">
-                  <User className="w-4 h-4" />
-                  <span>{user?.email}</span>
-                </div>
-                <button
-                  onClick={logout}
-                  className="px-4 py-3 rounded-full text-center text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200"
-                >
-                  <span className="block text-sm font-medium flex items-center gap-1">
-                    <LogOut className="w-4 h-4" />
-                    退出
-                  </span>
-                </button>
-              </div>
             </div>
+
+            <div className="hidden sm:flex items-center pl-4 ml-2 border-l border-gray-200">
+              <button
+                ref={userMenuButtonRef}
+                onClick={toggleUserMenu}
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-full px-3 py-2 transition-colors"
+                aria-label={language === 'zh' ? '用户菜单' : 'User menu'}
+                aria-expanded={showUserMenu}
+              >
+                <User className="w-4 h-4" />
+                <span className="truncate max-w-[120px]">{getEmailPrefix(user?.email)}</span>
+                <ChevronDown className={clsx(
+                  "w-3.5 h-3.5 transition-transform",
+                  showUserMenu && "rotate-180"
+                )} />
+              </button>
+            </div>
+
+            <button
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              className="sm:hidden ml-auto p-1.5 rounded-full text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+              aria-label="Menu"
+            >
+              {showMobileMenu ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            </button>
           </div>
         </div>
       </nav>
+
+      {showMobileMenu && (
+        <div className="sm:hidden fixed inset-x-0 top-20 z-50 bg-white border-b border-gray-200 shadow-lg max-h-[calc(100vh-5rem)] overflow-y-auto">
+          <div className="px-4 py-3 space-y-1">
+            <Link to="/" onClick={closeMobileMenu} className={clsx(
+              "block px-4 py-3 rounded-xl text-sm font-medium",
+              isActive('/') && !isActive('/new') && !isActive('/record') && !isActive('/edit') && !isActive('/export')
+                ? "bg-gray-100 text-gray-900"
+                : "text-gray-700 hover:bg-gray-50"
+            )}>
+              {language === 'zh' ? '首页' : 'Home'}
+            </Link>
+            <Link to="/new" onClick={closeMobileMenu} className={clsx(
+              "block px-4 py-3 rounded-xl text-sm font-medium",
+              isActive('/new')
+                ? "bg-gray-100 text-gray-900"
+                : "text-gray-700 hover:bg-gray-50"
+            )}>
+              {language === 'zh' ? '新建' : 'New'}
+            </Link>
+            <Link to="/export" onClick={closeMobileMenu} className={clsx(
+              "block px-4 py-3 rounded-xl text-sm font-medium",
+              isActive('/export')
+                ? "bg-gray-100 text-gray-900"
+                : "text-gray-700 hover:bg-gray-50"
+            )}>
+              {language === 'zh' ? '导出' : 'Export'}
+            </Link>
+            <button onClick={() => { setShowImportModal(true); closeMobileMenu(); }} className="w-full text-left block px-4 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50">
+              {language === 'zh' ? '导入数据' : 'Import Data'}
+            </button>
+            <Link to="/settings" onClick={closeMobileMenu} className={clsx(
+              "block px-4 py-3 rounded-xl text-sm font-medium",
+              isActive('/settings')
+                ? "bg-gray-100 text-gray-900"
+                : "text-gray-700 hover:bg-gray-50"
+            )}>
+              {language === 'zh' ? '设置' : 'Settings'}
+            </Link>
+            <button onClick={() => { setLanguage(language === 'zh' ? 'en' : 'zh'); closeMobileMenu(); }} className="w-full text-left block px-4 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50">
+              {language === 'zh' ? '中文' : 'English'}
+            </button>
+            <div className="border-t border-gray-200 pt-3 mt-3">
+              <div className="px-4 py-2 text-sm text-gray-700 flex items-center gap-2">
+                <User className="w-4 h-4" />
+                <span className="truncate">{getEmailPrefix(user?.email)}</span>
+              </div>
+              <button onClick={() => { logout(); closeMobileMenu(); }} className="w-full flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50">
+                <LogOut className="w-4 h-4" />
+                {language === 'zh' ? '退出' : 'Logout'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showUserMenu && userMenuPos && (
+        <div
+          ref={userMenuRef}
+          className="fixed w-56 z-50 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden"
+          style={{ top: userMenuPos.top, right: userMenuPos.right }}
+        >
+          <div className="px-4 py-3 border-b border-gray-100">
+            <p className="text-xs text-gray-500 mb-0.5">
+              {language === 'zh' ? '当前账号' : 'Signed in as'}
+            </p>
+            <p className="text-sm text-gray-900 truncate" title={user?.email}>
+              {user?.email}
+            </p>
+          </div>
+          <button
+            onClick={() => {
+              setShowUserMenu(false);
+              logout();
+            }}
+            className="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            <LogOut className="w-4 h-4" />
+            {language === 'zh' ? '退出' : 'Logout'}
+          </button>
+        </div>
+      )}
 
       {showImportModal && (
         <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-6">

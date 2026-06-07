@@ -88,13 +88,16 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto px-6 py-8">
         {/* Hero Module */}
-        <div className="bg-white border border-gray-200 rounded-3xl p-10 mb-8">
+        <div className="bg-white border border-gray-200 rounded-3xl p-6 sm:p-10 mb-8">
           <div className="text-center">
-            <h1 className="text-6xl font-extrabold text-gray-900 mb-2 tracking-tight">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-gray-900 mb-2 tracking-tight">
               {language === 'zh' ? 'LEVEL UP🏆' : 'LEVEL UP🏆'}
             </h1>
             <p className="text-lg text-gray-700 mb-3">2026-2027 VIQRC</p>
-            <p className="text-base text-gray-500">{language === 'zh' ? '工程进度管理!' : 'Engineering Notes Management!'}</p>
+            <p className="text-base text-gray-500">
+              {language === 'zh' ? '让每一次的发生都有迹可循。' : 'Make every "happening" traceable.'}
+            </p>
+            <p className="text-xs text-gray-400 mt-1">—— TEAM 8009.</p>
           </div>
         </div>
 
@@ -186,7 +189,7 @@ export default function Home() {
                 : language === 'zh' ? '查看和管理所有工程进度记录' : 'View and manage all engineering progress records'}
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={clsx(
@@ -197,7 +200,7 @@ export default function Home() {
               )}
             >
               <SlidersHorizontal className="w-4 h-4" />
-              {language === 'zh' ? '筛选' : 'Filters'}
+              <span className="hidden sm:inline">{language === 'zh' ? '筛选' : 'Filters'}</span>
               {activeFiltersCount > 0 && (
                 <span className="ml-1 px-2 py-0.5 bg-white text-gray-900 rounded-full text-xs">
                   {activeFiltersCount}
@@ -391,11 +394,11 @@ export default function Home() {
               <Link
                 key={record.id}
                 to={`/record/${record.id}`}
-                className="block bg-white border border-gray-200 rounded-2xl p-6 hover:border-gray-300 hover:shadow-sm active:scale-[0.995] transition-all duration-200"
+                className="block bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 hover:border-gray-300 hover:shadow-sm active:scale-[0.995] transition-all duration-200"
               >
-                <div className="flex items-start gap-6">
+                <div className="flex items-start gap-3 sm:gap-6">
                   {record.photos.length > 0 ? (
-                    <div className="w-24 h-24 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0">
+                    <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0">
                       <img
                         src={record.photos[0]}
                         alt=""
@@ -403,7 +406,7 @@ export default function Home() {
                       />
                     </div>
                   ) : (
-                    <div className="w-24 h-24 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <div className="w-16 h-16 sm:w-24 sm:h-24 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0">
                       <Layers className="w-8 h-8 text-gray-400" />
                     </div>
                   )}

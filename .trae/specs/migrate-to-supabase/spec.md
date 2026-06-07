@@ -179,9 +179,18 @@ alter table public.records enable row level security;
 create policy "teams read" on public.teams for select using (auth.role() = 'authenticated');
 create policy "teams write" on public.teams for insert with check (auth.uid() = owner_id);
 create policy "teams update" on public.teams for update using (auth.uid() = owner_id);
+create policy "teams delete" on public.teams for delete using (auth.uid() = owner_id);
 
 create policy "team_members read" on public.team_members for select using (auth.role() = 'authenticated');
 create policy "team_members write" on public.team_members for insert with check (auth.uid() = user_id);
+create policy "team_members delete" on public.team_members for delete using (
+  auth.uid() = user_id
+  or exists (
+    select 1 from public.teams t
+    where t.id = team_members.team_id
+      and t.owner_id = auth.uid()
+  )
+);
 
 create policy "records read" on public.records for select using (auth.role() = 'authenticated');
 create policy "records write" on public.records for insert with check (auth.uid() = created_by);
