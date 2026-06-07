@@ -213,12 +213,14 @@
 - 桌面端顶栏右侧不再有独立的"退出 / Logout"按钮
 - 取而代之的是一个可点击的"用户胶囊"（图标 + 邮箱前缀 + `ChevronDown` 下拉指示）
 - 点击该胶囊切换 `showUserMenu` 状态，下拉浮层从胶囊下方出现
+- **浮层定位方式：`position: fixed`**（基于触发按钮的 `getBoundingClientRect()` 计算 `top` / `right`），避免被 `nav` 的 `overflow-x-hidden` 裁剪
 - 浮层内容：
   - 顶部一行小字：完整邮箱 `user?.email`（用于在 @ 前缀之外仍可见全地址）
   - 一条 1px 分隔线
   - "退出 / Logout" 按钮（点击后 `logout()` 并关闭浮层）
-- 浮层定位：`absolute right-0 top-full mt-2`，`w-56`，`z-50`，`bg-white border border-gray-200 rounded-xl shadow-lg`
+- 浮层样式：`fixed w-56 z-50 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden`
 - 点击浮层外部或点击"退出"按钮后自动关闭
+- 滚动页面 / 改变窗口尺寸时重新计算浮层位置
 - 移动端汉堡浮层已有用户区域，按需同步显示邮箱前缀
 
 #### Scenario: 桌面端打开用户菜单
@@ -246,6 +248,22 @@
 #### Scenario: 极短邮箱访问
 - **WHEN** 用户邮箱为 `a@b.com`
 - **THEN** 顶栏显示 `a`（即 `a`），不显示 `@` 与后续字符
+
+### Requirement: 顶栏桌面端布局：链接靠左、用户胶囊靠右
+系统 SHALL 让桌面端顶栏（≥ 640px）的 Tab 链接在视觉上靠左对齐，仅用户胶囊在视觉上靠右对齐。
+- 外层 flex 容器从 `justify-end` 改为 `justify-between`
+- Tab 链接容器（首页 / 新建 / 导出 / 导入数据 / 设置 / 语言切换）保持左侧自然排列
+- 用户胶囊容器 `ml-auto` 推到右侧
+- 移动端（< 640px）下行为不变：只有汉堡按钮，整行由 `justify-end` 改为 `justify-between`（左空 + 右汉堡按钮）
+- 顶栏高度、背景、边框保持不变
+
+#### Scenario: 桌面端访问
+- **WHEN** 屏幕宽度 ≥ 640px
+- **THEN** 顶栏左侧为 Tab 链接（首页 / 新建 / 导出 / 导入数据 / 设置 / 中文 / English），右侧为用户胶囊
+
+#### Scenario: 移动端访问
+- **WHEN** 屏幕宽度 < 640px
+- **THEN** 顶栏右侧为汉堡按钮，左侧留白
 
 ## MODIFIED Requirements
 

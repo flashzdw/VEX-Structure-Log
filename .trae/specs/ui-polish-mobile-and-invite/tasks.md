@@ -58,6 +58,13 @@
   - [x] SubTask 8.6: 移动端汉堡浮层中的用户邮箱也改用 `getEmailPrefix(user?.email)`（保持视觉一致）
   - [x] SubTask 8.7: 运行 `npm run check` 与 `npm run build` 必须通过
 
+- [x] Task 9: 修复下拉菜单被遮挡 + 顶栏链接靠左对齐
+  - [x] SubTask 9.1: 把下拉浮层从 `position: absolute` 改为 `position: fixed`；通过 `userMenuButtonRef.current.getBoundingClientRect()` 计算 `top` / `right`；`top = rect.bottom + 8`（对应 `mt-2`），`right = window.innerWidth - rect.right`
+  - [x] SubTask 9.2: 在 `useEffect` 中除了 `mousedown` 监听，额外监听 `scroll`（`passive: true`）与 `resize`，浮层打开时实时更新位置
+  - [x] SubTask 9.3: 把外层 flex 容器 `justify-end` 改为 `justify-between`
+  - [x] SubTask 9.4: 在桌面端（≥ 640px）下，Tab 链接容器 `ml-auto` 让用户胶囊自然靠右；移动端（< 640px）下维持汉堡按钮靠右
+  - [x] SubTask 9.5: 运行 `npm run check` 与 `npm run build` 必须通过
+
 # Task Dependencies
 - Task 3 必须在 Task 4 之前完成（Settings 复制按钮依赖 store action） ✅
 - Task 1 / 2 / 4 / 5 / 7 / 8 互相独立，并行执行 ✅

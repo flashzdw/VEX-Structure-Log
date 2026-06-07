@@ -46,7 +46,9 @@ function Navigation() {
   } | null>(null);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [userMenuPos, setUserMenuPos] = useState<{ top: number; right: number } | null>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const userMenuButtonRef = useRef<HTMLButtonElement>(null);
 
   const closeMobileMenu = () => setShowMobileMenu(false);
 
@@ -56,16 +58,45 @@ function Navigation() {
     return atIdx === -1 ? email : email.slice(0, atIdx);
   };
 
-  // Close user menu when clicking outside
+  const updateUserMenuPos = () => {
+    if (!userMenuButtonRef.current) return;
+    const rect = userMenuButtonRef.current.getBoundingClientRect();
+    setUserMenuPos({
+      top: rect.bottom + 8,
+      right: window.innerWidth - rect.right,
+    });
+  };
+
+  const toggleUserMenu = () => {
+    if (showUserMenu) {
+      setShowUserMenu(false);
+      return;
+    }
+    updateUserMenuPos();
+    setShowUserMenu(true);
+  };
+
+  // Close user menu when clicking outside; reposition on scroll/resize
   useEffect(() => {
     if (!showUserMenu) return;
     const handleClickOutside = (e: MouseEvent) => {
-      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      if (
+        userMenuRef.current && !userMenuRef.current.contains(target) &&
+        userMenuButtonRef.current && !userMenuButtonRef.current.contains(target)
+      ) {
         setShowUserMenu(false);
       }
     };
+    const handleScrollOrResize = () => updateUserMenuPos();
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    window.addEventListener('scroll', handleScrollOrResize, { passive: true });
+    window.addEventListener('resize', handleScrollOrResize);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('scroll', handleScrollOrResize);
+      window.removeEventListener('resize', handleScrollOrResize);
+    };
   }, [showUserMenu]);
 
   const isActive = (path: string) => {
@@ -109,7 +140,7 @@ function Navigation() {
     <>
       <nav className="border-b border-gray-200 bg-white sticky top-0 z-40 overflow-x-hidden">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-end h-20 w-full">
+          <div className="flex items-center justify-between h-20 w-full">
             <div className="hidden sm:flex items-center gap-2">
               <Link
                 to="/"
@@ -173,11 +204,13 @@ function Navigation() {
                 {language === 'zh' ? '中文' : 'English'}
               </button>
 
-              <div className="relative ml-2 border-l border-gray-200 pl-4" ref={userMenuRef}>
+              <div className="ml-auto pl-4 border-l border-gray-200">
                 <button
-                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  ref={userMenuButtonRef}
+                  onClick={toggleUserMenu}
                   className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-full px-3 py-2 transition-colors"
                   aria-label={language === 'zh' ? '用户菜单' : 'User menu'}
+                  aria-expanded={showUserMenu}
                 >
                   <User className="w-4 h-4" />
                   <span className="truncate max-w-[120px]">{getEmailPrefix(user?.email)}</span>
@@ -186,29 +219,6 @@ function Navigation() {
                     showUserMenu && "rotate-180"
                   )} />
                 </button>
-
-                {showUserMenu && (
-                  <div className="absolute right-0 top-full mt-2 w-56 z-50 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
-                    <div className="px-4 py-3 border-b border-gray-100">
-                      <p className="text-xs text-gray-500 mb-0.5">
-                        {language === 'zh' ? '当前账号' : 'Signed in as'}
-                      </p>
-                      <p className="text-sm text-gray-900 truncate" title={user?.email}>
-                        {user?.email}
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => {
-                        setShowUserMenu(false);
-                        logout();
-                      }}
-                      className="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-                    >
-                      <LogOut className="w-4 h-4" />
-                      {language === 'zh' ? '退出' : 'Logout'}
-                    </button>
-                  </div>
-                )}
               </div>
             </div>
 
@@ -275,6 +285,33 @@ function Navigation() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {showUserMenu && userMenuPos && (
+        <div
+          ref={userMenuRef}
+          className="fixed w-56 z-50 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden"
+          style={{ top: userMenuPos.top, right: userMenuPos.right }}
+        >
+          <div className="px-4 py-3 border-b border-gray-100">
+            <p className="text-xs text-gray-500 mb-0.5">
+              {language === 'zh' ? '当前账号' : 'Signed in as'}
+            </p>
+            <p className="text-sm text-gray-900 truncate" title={user?.email}>
+              {user?.email}
+            </p>
+          </div>
+          <button
+            onClick={() => {
+              setShowUserMenu(false);
+              logout();
+            }}
+            className="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            <LogOut className="w-4 h-4" />
+            {language === 'zh' ? '退出' : 'Logout'}
+          </button>
         </div>
       )}
 
