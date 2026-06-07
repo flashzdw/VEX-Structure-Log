@@ -46,8 +46,20 @@
     - 在顶部按钮行中新增"导出 JSON"按钮（黑底实心，`FileJson` 图标），与"导出HTML文件"按钮并排；移动端用 `flex-col sm:flex-row` 上下 / 左右布局
   - [x] SubTask 7.4: 运行 `npm run check` 与 `npm run build` 必须通过
 
+- [x] Task 8: 顶栏用户下拉菜单 + 邮箱前缀
+  - [x] SubTask 8.1: 在 `src/App.tsx` 顶部 lucide-react 导入中新增 `ChevronDown` 图标
+  - [x] SubTask 8.2: 新增 state `showUserMenu`（`useState<boolean>`），用于控制桌面端下拉浮层显隐
+  - [x] SubTask 8.3: 新增 `useRef<HTMLDivElement>` 引用用户胶囊容器；通过 `useEffect` 监听 `mousedown` 事件，点击容器外部时关闭 `showUserMenu`
+  - [x] SubTask 8.4: 新增 helper `getEmailPrefix(email?: string)`：返回 `email?.split('@')[0] ?? ''`；无 `@` 时返回整段
+  - [x] SubTask 8.5: 替换桌面端顶栏的用户区（`<User icon>` + 全邮箱 + "退出"按钮）为：
+    - 一个可点击的"用户胶囊"（`<User icon>` + `getEmailPrefix(user?.email)` + `<ChevronDown>`），用 `useRef` 容器包裹
+    - 一个下拉浮层（`absolute right-0 top-full mt-2 w-56 z-50 bg-white border border-gray-200 rounded-xl shadow-lg`），仅在 `showUserMenu === true` 时渲染
+    - 浮层内：完整邮箱（小字） + 分隔线 + "退出"按钮（`LogOut` 图标 + 中文/英文）
+  - [x] SubTask 8.6: 移动端汉堡浮层中的用户邮箱也改用 `getEmailPrefix(user?.email)`（保持视觉一致）
+  - [x] SubTask 8.7: 运行 `npm run check` 与 `npm run build` 必须通过
+
 # Task Dependencies
 - Task 3 必须在 Task 4 之前完成（Settings 复制按钮依赖 store action） ✅
-- Task 1 / 2 / 4 / 5 / 7 互相独立，并行执行 ✅
+- Task 1 / 2 / 4 / 5 / 7 / 8 互相独立，并行执行 ✅
 - Task 6 在所有 UI 改动后执行 ✅
-- Task 7 独立于 Task 6，可在 Task 6 之后单独执行
+- Task 7 / 8 独立于 Task 6，可在 Task 6 之后单独执行

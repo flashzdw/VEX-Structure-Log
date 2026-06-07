@@ -55,6 +55,16 @@
 - [x] 顶栏移动端汉堡浮层内无"导出数据 / Export Data"条目
 - [x] `App.tsx` 中 `handleExport` 函数已被删除（顶栏不再触发 JSON 下载）
 
+## 顶栏 (App.tsx) 用户下拉菜单
+- [x] 桌面端顶栏不再有独立的"退出 / Logout"按钮
+- [x] 桌面端顶栏右侧出现"用户胶囊"（`User` 图标 + 邮箱前缀 + `ChevronDown`）
+- [x] 胶囊显示的内容为 `user?.email?.split('@')[0]`，即邮箱 `@` 前面的部分
+- [x] 点击胶囊切换下拉浮层显隐
+- [x] 下拉浮层顶部一行小字显示完整邮箱 `user?.email`
+- [x] 下拉浮层底部有"退出 / Logout"按钮，点击后调用 `logout()` 并关闭浮层
+- [x] 点击浮层外部时自动关闭浮层
+- [x] 移动端汉堡浮层中的用户邮箱也仅显示 `@` 前面的部分
+
 ## 构建 & 验证
 - [x] `npm run check` 通过（无 TS 报错）
 - [x] `npm run build` 通过（输出 `dist/index.html 630.23 kB`）

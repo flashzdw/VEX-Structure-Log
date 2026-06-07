@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { HashRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
-import { Plus, Globe, Download, Upload, X, Home, Cog, Settings, CheckCircle, AlertCircle, AlertTriangle, Info, LogOut, User, Loader2, Menu } from 'lucide-react';
+import { Plus, Globe, Download, Upload, X, Home, Cog, Settings, CheckCircle, AlertCircle, AlertTriangle, Info, LogOut, User, Loader2, Menu, ChevronDown } from 'lucide-react';
 import { useStore } from './store-supabase';
 import { translations } from './i18n';
 import HomePage from './pages/Home';
@@ -45,8 +45,28 @@ function Navigation() {
     errors: Array<{ message: string }>;
   } | null>(null);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   const closeMobileMenu = () => setShowMobileMenu(false);
+
+  const getEmailPrefix = (email?: string): string => {
+    if (!email) return '';
+    const atIdx = email.indexOf('@');
+    return atIdx === -1 ? email : email.slice(0, atIdx);
+  };
+
+  // Close user menu when clicking outside
+  useEffect(() => {
+    if (!showUserMenu) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setShowUserMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showUserMenu]);
 
   const isActive = (path: string) => {
     if (path === '/' && location.pathname === '/') return true;
@@ -153,18 +173,42 @@ function Navigation() {
                 {language === 'zh' ? '中文' : 'English'}
               </button>
 
-              <div className="flex items-center gap-2 ml-2 border-l border-gray-200 pl-4">
-                <div className="flex items-center gap-2 text-sm text-gray-700">
-                  <User className="w-4 h-4" />
-                  <span className="truncate max-w-[160px]">{user?.email}</span>
-                </div>
+              <div className="relative ml-2 border-l border-gray-200 pl-4" ref={userMenuRef}>
                 <button
-                  onClick={logout}
-                  className="px-4 py-2 rounded-full text-center text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 text-sm font-medium flex items-center gap-1 whitespace-nowrap"
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-full px-3 py-2 transition-colors"
+                  aria-label={language === 'zh' ? '用户菜单' : 'User menu'}
                 >
-                  <LogOut className="w-4 h-4" />
-                  {language === 'zh' ? '退出' : 'Logout'}
+                  <User className="w-4 h-4" />
+                  <span className="truncate max-w-[120px]">{getEmailPrefix(user?.email)}</span>
+                  <ChevronDown className={clsx(
+                    "w-3.5 h-3.5 transition-transform",
+                    showUserMenu && "rotate-180"
+                  )} />
                 </button>
+
+                {showUserMenu && (
+                  <div className="absolute right-0 top-full mt-2 w-56 z-50 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
+                    <div className="px-4 py-3 border-b border-gray-100">
+                      <p className="text-xs text-gray-500 mb-0.5">
+                        {language === 'zh' ? '当前账号' : 'Signed in as'}
+                      </p>
+                      <p className="text-sm text-gray-900 truncate" title={user?.email}>
+                        {user?.email}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setShowUserMenu(false);
+                        logout();
+                      }}
+                      className="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      {language === 'zh' ? '退出' : 'Logout'}
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -223,7 +267,7 @@ function Navigation() {
             <div className="border-t border-gray-200 pt-3 mt-3">
               <div className="px-4 py-2 text-sm text-gray-700 flex items-center gap-2">
                 <User className="w-4 h-4" />
-                <span className="truncate">{user?.email}</span>
+                <span className="truncate">{getEmailPrefix(user?.email)}</span>
               </div>
               <button onClick={() => { logout(); closeMobileMenu(); }} className="w-full flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50">
                 <LogOut className="w-4 h-4" />

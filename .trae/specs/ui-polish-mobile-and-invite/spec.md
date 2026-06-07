@@ -208,6 +208,45 @@
 - **WHEN** 用户访问 `/export` 且 `records.length === 0`
 - **THEN** "导出 JSON" 与 "导出HTML文件" 按钮均显示为 disabled
 
+### Requirement: 顶栏用户下拉菜单
+系统 SHALL 在桌面端顶栏把"退出 / Logout"按钮收纳到用户邮箱下拉菜单中，并仅展示邮箱 `@` 前面的前缀以节省横向空间。
+- 桌面端顶栏右侧不再有独立的"退出 / Logout"按钮
+- 取而代之的是一个可点击的"用户胶囊"（图标 + 邮箱前缀 + `ChevronDown` 下拉指示）
+- 点击该胶囊切换 `showUserMenu` 状态，下拉浮层从胶囊下方出现
+- 浮层内容：
+  - 顶部一行小字：完整邮箱 `user?.email`（用于在 @ 前缀之外仍可见全地址）
+  - 一条 1px 分隔线
+  - "退出 / Logout" 按钮（点击后 `logout()` 并关闭浮层）
+- 浮层定位：`absolute right-0 top-full mt-2`，`w-56`，`z-50`，`bg-white border border-gray-200 rounded-xl shadow-lg`
+- 点击浮层外部或点击"退出"按钮后自动关闭
+- 移动端汉堡浮层已有用户区域，按需同步显示邮箱前缀
+
+#### Scenario: 桌面端打开用户菜单
+- **WHEN** 屏幕宽度 ≥ 640px 且用户点击"用户胶囊"
+- **THEN** 浮层在胶囊下方展开，顶部显示完整邮箱、底部显示"退出"按钮
+
+#### Scenario: 桌面端点击外部关闭
+- **WHEN** 浮层处于打开状态且用户点击页面其它位置
+- **THEN** 浮层自动关闭
+
+#### Scenario: 桌面端退出登录
+- **WHEN** 浮层处于打开状态且用户点击"退出"按钮
+- **THEN** 调用 `logout()` 跳转到登录页
+
+### Requirement: 用户邮箱仅显示 @ 前部分
+系统 SHALL 在桌面端顶栏"用户胶囊"与移动端汉堡浮层中均仅显示用户邮箱 `@` 前面的部分。
+- 显示内容：`user?.email?.split('@')[0]`（无 `@` 时整段显示）
+- 完整邮箱仍在桌面端下拉浮层顶部可见（用于核对）
+- 移动端浮层也可选地只显示前缀以保持视觉一致
+
+#### Scenario: 长邮箱访问
+- **WHEN** 用户邮箱为 `verylongusername12345@gmail.com`
+- **THEN** 顶栏仅显示 `verylongusername12345`，不再占用超过 ~120px 横向空间
+
+#### Scenario: 极短邮箱访问
+- **WHEN** 用户邮箱为 `a@b.com`
+- **THEN** 顶栏显示 `a`（即 `a`），不显示 `@` 与后续字符
+
 ## MODIFIED Requirements
 
 ### Requirement: 顶栏整体
@@ -230,6 +269,12 @@
 ### Requirement: 顶栏"导出数据"按钮
 **Reason**: 顶栏已有"导出" Tab 跳转到 `/export` 页面，把 JSON 导出整合到该页面内可减少顶栏冗余操作
 **Migration**: JSON 导出功能由 `ExportPage` 顶部新加的"导出 JSON"按钮承担；`App.tsx` 中 `handleExport` 函数被同步删除（如果其他地方无引用）
+
+### Requirement: 顶栏独立"退出 / Logout"按钮
+**Reason**: 退出登录是低频操作，与"用户胶囊"合并后可减少顶栏视觉噪声；用户胶囊自身作为点击区域更直观
+**Migration**: 退出登录功能由"用户胶囊"下拉菜单承担；`App.tsx` 顶栏桌面端右侧的独立"退出"按钮被同步删除
+
+## REMOVED Requirements
 
 ### Requirement: 顶栏 Tab 双语副标题
 **Reason**: 占用横向空间且在移动端会导致溢出；移除以提升窄屏可读性
