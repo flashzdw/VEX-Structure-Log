@@ -70,6 +70,18 @@
   - [x] SubTask 10.2: 确保按钮位置保持在顶栏右上角（同一坐标）；展开时 `Menu` ↔ `X` 切换均在原位
   - [x] SubTask 10.3: 运行 `npm run check` 与 `npm run build` 必须通过
 
+- [x] Task 11: 修复用户名靠左 + 删除队伍失败
+  - [x] SubTask 11.1: 在 `src/App.tsx` 中把用户胶囊**移出**桌面端 Tab 链接容器，作为外层 flex 的**独立子元素**；链接容器加 `flex-1 min-w-0` 自然占据左侧空间，用户胶囊容器加 `ml-2 pl-4 border-l` 位于右半部分
+  - [x] SubTask 11.2: 移动端汉堡按钮加 `ml-auto` 确保只有它可见时也靠右
+  - [x] SubTask 11.3: 在 `src/api/supabase.ts` 的 `deleteTeam` 中：
+    - 先 `supabase.auth.getUser()` 拿到当前用户
+    - 先 `select('owner_id').eq('id', id).single()` 校验当前用户是该队伍的 owner，否则抛"仅队长可删除该队伍"
+    - 先 `from('team_members').delete().eq('team_id', id)` 删除所有成员关联（避免外键约束）
+    - 再 `from('teams').delete().eq('id', id)` 删除队伍本身
+  - [x] SubTask 11.4: 在 `src/store-supabase.ts` 的 store action `deleteTeam` 中，`catch` 块**重新抛出错误**（之前只是写入 state，UI 看不到）
+  - [x] SubTask 11.5: 在 `src/pages/Settings.tsx` 的 `handleConfirmDelete` 中用 `try/catch` 包裹 `deleteTeam` 调用，失败时通过 `setCopyStatus({ type: 'error', message })` 复用现有的红色 toast 提示
+  - [x] SubTask 11.6: 运行 `npm run check` 与 `npm run build` 必须通过
+
 # Task Dependencies
 - Task 3 必须在 Task 4 之前完成（Settings 复制按钮依赖 store action） ✅
 - Task 1 / 2 / 4 / 5 / 7 / 8 互相独立，并行执行 ✅

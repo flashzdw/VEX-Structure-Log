@@ -82,8 +82,23 @@
 - [x] 关闭时 `X` 图标恢复为 `Menu` 图标，位置不变
 - [x] 桌面端（≥ 640px）下按钮不显示
 
+## 顶栏 (App.tsx) 用户胶囊独立化（修复靠左对齐）
+- [x] 用户胶囊已**移出**桌面端 Tab 链接容器，作为外层 flex 容器的独立子元素
+- [x] 桌面端 Tab 链接容器加 `flex-1 min-w-0`，自然占据左侧剩余空间
+- [x] 桌面端用户胶囊容器加 `pl-4 ml-2 border-l border-gray-200`，与 Tab 区视觉分隔
+- [x] 外层 flex 容器**不再使用** `justify-between`（避免把整体挤向左）
+- [x] 桌面端（≥ 640px）下 Tab 区视觉上靠左，用户胶囊视觉上靠右
+- [x] 移动端（< 640px）下汉堡按钮加 `ml-auto`，确保单独显示时也靠右
+
+## 删除队伍（修复 403 / 外键约束 / 静默失败）
+- [x] `src/api/supabase.ts` 的 `deleteTeam` 在删除前先 `supabase.auth.getUser()` 拿到当前用户
+- [x] `deleteTeam` 调用 `select('owner_id').eq('id', id).single()` 校验当前用户是 owner，否则抛"仅队长可删除该队伍"
+- [x] `deleteTeam` 在删除 `teams` 之前先 `from('team_members').delete().eq('team_id', id)`，避免外键约束阻断
+- [x] `src/store-supabase.ts` 的 store action `deleteTeam` 在 `catch` 块中**重新抛出错误**（`throw error`），不再静默吞掉
+- [x] `src/pages/Settings.tsx` 的 `handleConfirmDelete` 用 `try/catch` 包裹 `deleteTeam`，成功时绿色 toast "队伍删除成功！"，失败时通过 `setCopyStatus({ type: 'error', message })` 复用红色 toast 展示具体原因
+
 ## 构建 & 验证
 - [x] `npm run check` 通过（无 TS 报错）
-- [x] `npm run build` 通过（输出 `dist/index.html 630.23 kB`）
+- [x] `npm run build` 通过（输出 `dist/index.html 634.51 kB`）
 - [x] 视觉验证（DevTools iPhone SE 视口）—— 受限于沙箱环境，Chrome 与 Playwright 浏览器不可用，未能进行截图验证；改用代码审查 + 构建通过作为信号
 - [x] 桌面视口（≥ 1024px）下确认 —— 同上，依赖代码审查

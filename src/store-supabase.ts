@@ -368,12 +368,13 @@ export const useStore = create<Store>((set, get) => ({
 
   deleteTeam: async (id) => {
     set({ loading: true, error: null });
-
     try {
       await deleteTeamSB(id);
       await get().loadData();
     } catch (error) {
-      set({ error: error instanceof Error ? error.message : '删除队伍失败' });
+      const message = error instanceof Error ? error.message : '删除队伍失败';
+      set({ error: message });
+      throw error;
     } finally {
       set({ loading: false });
     }

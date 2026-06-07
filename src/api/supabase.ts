@@ -357,6 +357,35 @@ export async function updateTeam(id: string, name: string) {
 
 export async function deleteTeam(id: string) {
   ensureClient();
+  const { data: userData } = await supabase.auth.getUser();
+  const user = userData.user;
+  if (!user) {
+    throw new Error('请先登录');
+  }
+
+  // 验证当前用户是该队伍的 owner
+  const { data: team, error: tFetchErr } = await supabase
+    .from('teams')
+    .select('owner_id')
+    .eq('id', id)
+    .single();
+  if (tFetchErr) {
+    throw new Error(tFetchErr.message);
+  }
+  if (!team || (team as SBTeam).owner_id !== user.id) {
+    throw new Error('仅队长可删除该队伍');
+  }
+
+  // 先删除 team_members 关联（外键约束）
+  const { error: mErr } = await supabase
+    .from('team_members')
+    .delete()
+    .eq('team_id', id);
+  if (mErr) {
+    throw new Error(`删除队伍成员失败：${mErr.message}`);
+  }
+
+  // 再删除 team 本身
   const { error } = await supabase.from('teams').delete().eq('id', id);
   if (error) {
     throw new Error(error.message);

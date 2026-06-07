@@ -114,10 +114,16 @@ export default function Settings() {
 
   const handleConfirmDelete = async () => {
     if (showDeleteConfirm) {
-      await deleteTeam(showDeleteConfirm);
+      const deletingId = showDeleteConfirm;
       setShowDeleteConfirm(null);
-      setSuccessMessage(language === 'zh' ? '队伍删除成功！' : 'Team deleted successfully!');
-      setTimeout(() => setSuccessMessage(null), 2000);
+      try {
+        await deleteTeam(deletingId);
+        setSuccessMessage(language === 'zh' ? '队伍删除成功！' : 'Team deleted successfully!');
+        setTimeout(() => setSuccessMessage(null), 2000);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : (language === 'zh' ? '删除队伍失败' : 'Failed to delete team');
+        setCopyStatus({ type: 'error', message });
+      }
     }
   };
 

@@ -251,15 +251,15 @@
 
 ### Requirement: 顶栏桌面端布局：链接靠左、用户胶囊靠右
 系统 SHALL 让桌面端顶栏（≥ 640px）的 Tab 链接在视觉上靠左对齐，仅用户胶囊在视觉上靠右对齐。
-- 外层 flex 容器从 `justify-end` 改为 `justify-between`
-- Tab 链接容器（首页 / 新建 / 导出 / 导入数据 / 设置 / 语言切换）保持左侧自然排列
-- 用户胶囊容器 `ml-auto` 推到右侧
-- 移动端（< 640px）下行为不变：只有汉堡按钮，整行由 `justify-end` 改为 `justify-between`（左空 + 右汉堡按钮）
+- 外层 flex 容器**不再**使用 `justify-between`，改为普通的 `flex items-center h-20 w-full`
+- Tab 链接容器为外层 flex 的**第一个子元素**，加 `flex-1 min-w-0`，自然占据所有可用空间，链接在容器内左对齐
+- 用户胶囊容器为外层 flex 的**独立子元素**（不再嵌套在链接容器内），加 `ml-2 pl-4 border-l border-gray-200`，自然位于右半部分
+- 移动端（< 640px）下行为不变：链接容器与用户胶囊都隐藏，汉堡按钮作为外层 flex 的最后一个子元素，加 `ml-auto` 推到右侧
 - 顶栏高度、背景、边框保持不变
 
 #### Scenario: 桌面端访问
 - **WHEN** 屏幕宽度 ≥ 640px
-- **THEN** 顶栏左侧为 Tab 链接（首页 / 新建 / 导出 / 导入数据 / 设置 / 中文 / English），右侧为用户胶囊
+- **THEN** 顶栏左侧为 Tab 链接（首页 / 新建 / 导出 / 导入数据 / 设置 / 中文 / English），最右侧为用户胶囊
 
 #### Scenario: 移动端访问
 - **WHEN** 屏幕宽度 < 640px

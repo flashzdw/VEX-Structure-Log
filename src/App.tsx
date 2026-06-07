@@ -140,8 +140,8 @@ function Navigation() {
     <>
       <nav className="border-b border-gray-200 bg-white sticky top-0 z-40 overflow-x-hidden">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between h-20 w-full">
-            <div className="hidden sm:flex items-center gap-2">
+          <div className="flex items-center h-20 w-full">
+            <div className="hidden sm:flex items-center gap-2 flex-1 min-w-0">
               <Link
                 to="/"
                 className={clsx(
@@ -203,28 +203,28 @@ function Navigation() {
               >
                 {language === 'zh' ? '中文' : 'English'}
               </button>
+            </div>
 
-              <div className="ml-auto pl-4 border-l border-gray-200">
-                <button
-                  ref={userMenuButtonRef}
-                  onClick={toggleUserMenu}
-                  className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-full px-3 py-2 transition-colors"
-                  aria-label={language === 'zh' ? '用户菜单' : 'User menu'}
-                  aria-expanded={showUserMenu}
-                >
-                  <User className="w-4 h-4" />
-                  <span className="truncate max-w-[120px]">{getEmailPrefix(user?.email)}</span>
-                  <ChevronDown className={clsx(
-                    "w-3.5 h-3.5 transition-transform",
-                    showUserMenu && "rotate-180"
-                  )} />
-                </button>
-              </div>
+            <div className="hidden sm:flex items-center pl-4 ml-2 border-l border-gray-200">
+              <button
+                ref={userMenuButtonRef}
+                onClick={toggleUserMenu}
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-full px-3 py-2 transition-colors"
+                aria-label={language === 'zh' ? '用户菜单' : 'User menu'}
+                aria-expanded={showUserMenu}
+              >
+                <User className="w-4 h-4" />
+                <span className="truncate max-w-[120px]">{getEmailPrefix(user?.email)}</span>
+                <ChevronDown className={clsx(
+                  "w-3.5 h-3.5 transition-transform",
+                  showUserMenu && "rotate-180"
+                )} />
+              </button>
             </div>
 
             <button
               onClick={() => setShowMobileMenu(!showMobileMenu)}
-              className="sm:hidden p-1.5 rounded-full text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+              className="sm:hidden ml-auto p-1.5 rounded-full text-gray-600 hover:text-gray-900 hover:bg-gray-50"
               aria-label="Menu"
             >
               {showMobileMenu ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
