@@ -263,7 +263,7 @@ export default function RecordForm() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
                 <div className="min-w-0">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     {language === 'zh' ? '日期' : 'Date'}
@@ -274,7 +274,7 @@ export default function RecordForm() {
                     value={formData.date}
                     onChange={(e) => handleInputChange('date', e.target.value)}
                     className={clsx(
-                      "block w-full min-w-0 max-w-full box-border px-4 py-3 border rounded-full text-sm focus:outline-none transition-colors",
+                      "block w-full min-w-0 max-w-full box-border px-4 py-3 border rounded-full text-sm focus:outline-none transition-colors truncate",
                       errors.date
                         ? "border-red-500 focus:border-red-600"
                         : "border-gray-300 focus:border-gray-400"
@@ -298,7 +298,7 @@ export default function RecordForm() {
                     onChange={(e) => handleInputChange('author', e.target.value)}
                     placeholder={language === 'zh' ? '输入姓名' : 'Enter name'}
                     className={clsx(
-                      "block w-full min-w-0 max-w-full box-border px-4 py-3 border rounded-full text-sm focus:outline-none transition-colors",
+                      "block w-full min-w-0 max-w-full box-border px-4 py-3 border rounded-full text-sm focus:outline-none transition-colors truncate",
                       errors.author
                         ? "border-red-500 focus:border-red-600"
                         : "border-gray-300 focus:border-gray-400"
@@ -312,7 +312,7 @@ export default function RecordForm() {
                   )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
                 <div className="min-w-0">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     {language === 'zh' ? '模块' : 'Module'}
@@ -321,7 +321,7 @@ export default function RecordForm() {
                     required
                     value={formData.module}
                     onChange={(e) => handleInputChange('module', e.target.value)}
-                    className="block w-full min-w-0 max-w-full box-border px-4 py-3 border border-gray-300 rounded-full text-sm focus:outline-none focus:border-gray-400 transition-colors appearance-none cursor-pointer"
+                    className="block w-full min-w-0 max-w-full box-border px-4 py-3 border border-gray-300 rounded-full text-sm focus:outline-none focus:border-gray-400 transition-colors appearance-none cursor-pointer truncate"
                   >
                     <option value="底盘">{language === 'zh' ? '底盘' : 'Chassis'}</option>
                     <option value="抓手">{language === 'zh' ? '抓手' : 'Gripper'}</option>
@@ -337,7 +337,7 @@ export default function RecordForm() {
                   <select
                     value={formData.team}
                     onChange={(e) => handleInputChange('team', e.target.value)}
-                    className="block w-full min-w-0 max-w-full box-border px-4 py-3 border border-gray-300 rounded-full text-sm focus:outline-none focus:border-gray-400 transition-colors appearance-none cursor-pointer"
+                    className="block w-full min-w-0 max-w-full box-border px-4 py-3 border border-gray-300 rounded-full text-sm focus:outline-none focus:border-gray-400 transition-colors appearance-none cursor-pointer truncate"
                   >
                     <option value="">{language === 'zh' ? '请选择队伍' : 'Select team'}</option>
                     {teams.map(team => (
