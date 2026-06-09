@@ -28,3 +28,33 @@
     page-break-inside: avoid;
   }
 }
+
+/* ==== 修复 form input 在 iOS / Android 上的强制最小宽度 ==== */
+@layer base {
+  /* 关键：min-w-0 必须在容器 + 输入框都设置 */
+  input,
+  select,
+  textarea {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  /* iOS Safari date / datetime input 的 ~138px min-content 兜底 */
+  input[type="date"],
+  input[type="datetime-local"],
+  input[type="time"],
+  input[type="month"] {
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* iOS focus 时字号必须 ≥ 16px，否则浏览器自动放大导致布局抖动 */
+  @supports (-webkit-touch-callout: none) {
+    input,
+    select,
+    textarea {
+      font-size: 16px;
+    }
+  }
+}
