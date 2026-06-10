@@ -62,3 +62,13 @@
     }
   }
 }
+
+/* ==== 兜底：Tailwind v3 content scanner 偶尔漏掉 table-fixed / border-collapse ==== */
+/* 直接在 CSS 里硬写一遍，不走 Tailwind utility，确保一定能进 dist */
+table {
+  border-collapse: collapse;
+}
+table.form-table,
+table[class*="table-fixed"] {
+  table-layout: fixed !important;
+}
