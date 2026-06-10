@@ -31,22 +31,26 @@
 
 /* ==== 修复 form input 在 iOS / Android 上的强制最小宽度 ==== */
 @layer base {
-  /* 关键：min-w-0 必须在容器 + 输入框都设置 */
+  /* 关键：必须 !important 压过 Tailwind utility（min-w-0）和 iOS UA 样式 */
   input,
   select,
   textarea {
-    min-width: 0;
-    max-width: 100%;
+    min-width: 0 !important;
+    max-width: 100% !important;
   }
 
-  /* iOS Safari date / datetime input 的 ~138px min-content 兜底 */
+  /* iOS Safari / iOS Chrome（WKWebView）对 date / datetime / time / month
+     在浏览器引擎层强制 ~138px intrinsic min-content，仅靠 min-w-0 拦不住。
+     必须 width:100% !important + box-sizing:border-box !important 才能
+     强行让输入框宽度跟父容器走，再由父容器的 overflow-hidden 裁掉越界部分。 */
   input[type="date"],
   input[type="datetime-local"],
   input[type="time"],
   input[type="month"] {
-    min-width: 0;
-    width: 100%;
-    box-sizing: border-box;
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   /* iOS focus 时字号必须 ≥ 16px，否则浏览器自动放大导致布局抖动 */
@@ -54,7 +58,7 @@
     input,
     select,
     textarea {
-      font-size: 16px;
+      font-size: 16px !important;
     }
   }
 }
