@@ -263,8 +263,8 @@ export default function RecordForm() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
-                <div className="min-w-0 w-full overflow-hidden">
+              <div className="flex gap-x-4">
+                <div className="flex-1 min-w-0 overflow-hidden">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     {language === 'zh' ? '日期' : 'Date'}
                   </label>
@@ -287,7 +287,7 @@ export default function RecordForm() {
                     </p>
                   )}
                 </div>
-                <div className="min-w-0 w-full overflow-hidden">
+                <div className="flex-1 min-w-0 overflow-hidden">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     {language === 'zh' ? '负责人' : 'Author'}
                   </label>
@@ -312,8 +312,8 @@ export default function RecordForm() {
                   )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
-                <div className="min-w-0 w-full overflow-hidden">
+              <div className="flex gap-x-4">
+                <div className="flex-1 min-w-0 overflow-hidden">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     {language === 'zh' ? '模块' : 'Module'}
                   </label>
@@ -330,7 +330,7 @@ export default function RecordForm() {
                     <option value="其他">{language === 'zh' ? '其他' : 'Other'}</option>
                   </select>
                 </div>
-                <div className="min-w-0 w-full overflow-hidden">
+                <div className="flex-1 min-w-0 overflow-hidden">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     {language === 'zh' ? '队伍' : 'Team'}
                   </label>
