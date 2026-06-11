@@ -263,7 +263,7 @@ export default function RecordForm() {
 
           <form onSubmit={handleSubmit} className="space-y-6" style={{ maxWidth: '100%', overflow: 'hidden' }}>
             <div className="space-y-4">
-              <div>
+              <div className="max-w-full overflow-hidden">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   {language === 'zh' ? '日期' : 'Date'}
                 </label>
@@ -272,8 +272,9 @@ export default function RecordForm() {
                   required
                   value={formData.date}
                   onChange={(e) => handleInputChange('date', e.target.value)}
+                  style={{ maxWidth: '100%' }}
                   className={clsx(
-                    "block w-full min-w-0 max-w-full box-border px-4 py-3 border rounded-full text-base focus:outline-none transition-colors",
+                    "block w-full min-w-0 max-w-full appearance-none bg-white box-border px-4 py-3 border rounded-full text-base focus:outline-none transition-colors",
                     errors.date
                       ? "border-red-500 focus:border-red-600"
                       : "border-gray-300 focus:border-gray-400"
