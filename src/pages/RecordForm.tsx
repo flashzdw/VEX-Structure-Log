@@ -261,90 +261,90 @@ export default function RecordForm() {
             {isEdit ? (language === 'zh' ? '编辑记录' : 'Edit Record') : (language === 'zh' ? '新建记录' : 'New Record')}
           </h1>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6" style={{ maxWidth: '100%', overflow: 'hidden' }}>
             <div className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
-                <div className="min-w-0">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {language === 'zh' ? '日期' : 'Date'}
-                  </label>
-                  <input
-                    type="date"
-                    required
-                    value={formData.date}
-                    onChange={(e) => handleInputChange('date', e.target.value)}
-                    className={clsx(
-                      "block w-full min-w-0 max-w-full box-border px-4 py-3 border rounded-full text-sm focus:outline-none transition-colors truncate",
-                      errors.date
-                        ? "border-red-500 focus:border-red-600"
-                        : "border-gray-300 focus:border-gray-400"
-                    )}
-                  />
-                  {errors.date && (
-                    <p className="mt-1 text-xs text-red-600 flex items-center gap-1">
-                      <AlertCircle className="w-3 h-3" />
-                      {errors.date}
-                    </p>
+              <div className="max-w-full overflow-hidden">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {language === 'zh' ? '日期' : 'Date'}
+                </label>
+                <input
+                  type="date"
+                  required
+                  value={formData.date}
+                  onChange={(e) => handleInputChange('date', e.target.value)}
+                  style={{ maxWidth: '100%' }}
+                  className={clsx(
+                    "block w-full min-w-0 max-w-full appearance-none bg-white box-border px-4 py-3 border rounded-full text-base focus:outline-none transition-colors",
+                    errors.date
+                      ? "border-red-500 focus:border-red-600"
+                      : "border-gray-300 focus:border-gray-400"
                   )}
-                </div>
-                <div className="min-w-0">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {language === 'zh' ? '负责人' : 'Author'}
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.author}
-                    onChange={(e) => handleInputChange('author', e.target.value)}
-                    placeholder={language === 'zh' ? '输入姓名' : 'Enter name'}
-                    className={clsx(
-                      "block w-full min-w-0 max-w-full box-border px-4 py-3 border rounded-full text-sm focus:outline-none transition-colors truncate",
-                      errors.author
-                        ? "border-red-500 focus:border-red-600"
-                        : "border-gray-300 focus:border-gray-400"
-                    )}
-                  />
-                  {errors.author && (
-                    <p className="mt-1 text-xs text-red-600 flex items-center gap-1">
-                      <AlertCircle className="w-3 h-3" />
-                      {errors.author}
-                    </p>
-                  )}
-                </div>
+                />
+                {errors.date && (
+                  <p className="mt-1 text-xs text-red-600 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    {errors.date}
+                  </p>
+                )}
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
-                <div className="min-w-0">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {language === 'zh' ? '模块' : 'Module'}
-                  </label>
-                  <select
-                    required
-                    value={formData.module}
-                    onChange={(e) => handleInputChange('module', e.target.value)}
-                    className="block w-full min-w-0 max-w-full box-border px-4 py-3 border border-gray-300 rounded-full text-sm focus:outline-none focus:border-gray-400 transition-colors appearance-none cursor-pointer truncate"
-                  >
-                    <option value="底盘">{language === 'zh' ? '底盘' : 'Chassis'}</option>
-                    <option value="抓手">{language === 'zh' ? '抓手' : 'Gripper'}</option>
-                    <option value="弹射">{language === 'zh' ? '弹射' : 'Catapult'}</option>
-                    <option value="升降">{language === 'zh' ? '升降' : 'Lift'}</option>
-                    <option value="其他">{language === 'zh' ? '其他' : 'Other'}</option>
-                  </select>
-                </div>
-                <div className="min-w-0">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {language === 'zh' ? '队伍' : 'Team'}
-                  </label>
-                  <select
-                    value={formData.team}
-                    onChange={(e) => handleInputChange('team', e.target.value)}
-                    className="block w-full min-w-0 max-w-full box-border px-4 py-3 border border-gray-300 rounded-full text-sm focus:outline-none focus:border-gray-400 transition-colors appearance-none cursor-pointer truncate"
-                  >
-                    <option value="">{language === 'zh' ? '请选择队伍' : 'Select team'}</option>
-                    {teams.map(team => (
-                      <option key={team.id} value={team.id}>{team.name}</option>
-                    ))}
-                  </select>
-                </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {language === 'zh' ? '负责人' : 'Author'}
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.author}
+                  onChange={(e) => handleInputChange('author', e.target.value)}
+                  placeholder={language === 'zh' ? '输入姓名' : 'Enter name'}
+                  className={clsx(
+                    "block w-full min-w-0 max-w-full box-border px-4 py-3 border rounded-full text-base focus:outline-none transition-colors",
+                    errors.author
+                      ? "border-red-500 focus:border-red-600"
+                      : "border-gray-300 focus:border-gray-400"
+                  )}
+                />
+                {errors.author && (
+                  <p className="mt-1 text-xs text-red-600 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    {errors.author}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {language === 'zh' ? '模块' : 'Module'}
+                </label>
+                <select
+                  required
+                  value={formData.module}
+                  onChange={(e) => handleInputChange('module', e.target.value)}
+                  className="block w-full min-w-0 max-w-full box-border px-4 py-3 border border-gray-300 rounded-full text-base focus:outline-none focus:border-gray-400 transition-colors appearance-none cursor-pointer"
+                >
+                  <option value="底盘">{language === 'zh' ? '底盘' : 'Chassis'}</option>
+                  <option value="抓手">{language === 'zh' ? '抓手' : 'Gripper'}</option>
+                  <option value="弹射">{language === 'zh' ? '弹射' : 'Catapult'}</option>
+                  <option value="升降">{language === 'zh' ? '升降' : 'Lift'}</option>
+                  <option value="其他">{language === 'zh' ? '其他' : 'Other'}</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {language === 'zh' ? '队伍' : 'Team'}
+                </label>
+                <select
+                  value={formData.team}
+                  onChange={(e) => handleInputChange('team', e.target.value)}
+                  className="block w-full min-w-0 max-w-full box-border px-4 py-3 border border-gray-300 rounded-full text-base focus:outline-none focus:border-gray-400 transition-colors appearance-none cursor-pointer"
+                >
+                  <option value="">{language === 'zh' ? '请选择队伍' : 'Select team'}</option>
+                  {teams.map(team => (
+                    <option key={team.id} value={team.id}>{team.name}</option>
+                  ))}
+                </select>
               </div>
             </div>
 
