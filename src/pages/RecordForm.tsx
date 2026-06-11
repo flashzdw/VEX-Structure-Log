@@ -261,14 +261,14 @@ export default function RecordForm() {
             {isEdit ? (language === 'zh' ? '编辑记录' : 'Edit Record') : (language === 'zh' ? '新建记录' : 'New Record')}
           </h1>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6" style={{ maxWidth: '100%', overflow: 'hidden' }}>
             <table
               className="w-full border-collapse"
-              style={{ tableLayout: 'fixed', borderCollapse: 'collapse' }}
+              style={{ tableLayout: 'fixed', borderCollapse: 'collapse', width: '100%' }}
             >
               <tbody>
                 <tr>
-                  <td className="w-1/2 pr-2 align-top">
+                  <td className="w-1/2 pr-2 align-top" style={{ width: '50%' }}>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       {language === 'zh' ? '日期' : 'Date'}
                     </label>
@@ -291,7 +291,7 @@ export default function RecordForm() {
                       </p>
                     )}
                   </td>
-                  <td className="w-1/2 pl-2 align-top">
+                  <td className="w-1/2 pl-2 align-top" style={{ width: '50%' }}>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       {language === 'zh' ? '负责人' : 'Author'}
                     </label>
@@ -317,7 +317,7 @@ export default function RecordForm() {
                   </td>
                 </tr>
                 <tr>
-                  <td className="w-1/2 pr-2 align-top pt-4">
+                  <td className="w-1/2 pr-2 align-top pt-4" style={{ width: '50%' }}>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       {language === 'zh' ? '模块' : 'Module'}
                     </label>
@@ -334,7 +334,7 @@ export default function RecordForm() {
                       <option value="其他">{language === 'zh' ? '其他' : 'Other'}</option>
                     </select>
                   </td>
-                  <td className="w-1/2 pl-2 align-top pt-4">
+                  <td className="w-1/2 pl-2 align-top pt-4" style={{ width: '50%' }}>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       {language === 'zh' ? '队伍' : 'Team'}
                     </label>
